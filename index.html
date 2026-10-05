@@ -38,8 +38,14 @@ button:focus-visible,.label:focus-visible{outline:2px solid var(--gold);outline-
 .brand p{margin:3px 0 0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
 
 /* directory */
-.dir{position:fixed;right:16px;top:calc(env(safe-area-inset-top,0px) + 16px);padding:12px;width:220px}
-.dir h2{margin:0 4px 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:500}
+.dir{position:fixed;right:16px;top:calc(env(safe-area-inset-top,0px) + 16px);padding:6px;width:228px;max-width:calc(100vw - 32px)}
+.dir.collapsed{width:auto}
+.dirtoggle{display:flex;align-items:center;gap:8px;width:100%;height:34px;padding:0 10px;border:0;border-radius:10px;background:transparent;font-size:13px;font-weight:500;white-space:nowrap}
+.dirtoggle:hover{background:var(--chip)}
+.dirtoggle svg{width:16px;height:16px;flex:none}.dirtoggle .chev{margin-left:auto;transition:transform .2s}
+.dir:not(.collapsed) .dirtoggle .chev{transform:rotate(180deg)}
+.dir.collapsed ul{display:none}
+.dir ul{margin-top:4px!important}
 .dir ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .dir button{width:100%;display:flex;align-items:center;gap:10px;padding:7px 8px;border:0;border-radius:10px;background:transparent;text-align:left}
 .dir button:hover,.dir button[aria-current="true"]{background:var(--chip)}
@@ -101,21 +107,35 @@ a.btn{color:inherit;text-decoration:none}
 .fallback{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(360px,calc(100vw - 32px));padding:20px;display:grid;gap:10px;z-index:5}
 .fallback h2{margin:0;font:700 20px var(--f-title)}.fallback p{margin:0 0 4px;font-size:13px;color:var(--ink-soft)}
 .fallback a{display:block;padding:12px 14px;border-radius:12px;background:var(--glass-strong);color:var(--ink);text-decoration:none;font-weight:500}
+.btn.sea{padding:0 10px;min-width:34px;justify-content:center}
+.btn#bMusic[aria-pressed="true"]{color:var(--accent)}
+.mpanel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 66px);width:min(360px,calc(100vw - 32px));padding:14px;z-index:4;max-height:60vh;overflow:auto}
+.mhead{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.mplay{width:44px;height:44px;flex:none;border:0;border-radius:999px;background:var(--accent);color:#fff;display:grid;place-items:center}
+.mplay svg{width:20px;height:20px}
+.mnow{min-width:0}.mnow small{display:block;font-size:11px;color:var(--ink-soft);letter-spacing:.06em}.mnow b{display:block;font-weight:500;font-size:14px;line-height:1.35}
+.mlist{display:grid;gap:2px}
+.mlist button{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;border-radius:10px;background:transparent;text-align:left;font-size:13px}
+.mlist button:hover{background:var(--chip)}
+.mlist button[aria-checked="true"]{background:var(--chip);font-weight:500}
+.mlist i{width:8px;height:8px;border-radius:999px;border:1.5px solid var(--ink-soft);flex:none}
+.mlist button[aria-checked="true"] i{background:var(--accent);border-color:var(--accent)}
+.mlist span{min-width:0}.mlist small{display:block;color:var(--ink-soft);font-size:11px}
+.mcred{margin:10px 2px 0;font-size:10.5px;line-height:1.55;color:var(--ink-soft)}
+.mcred a{color:inherit}
 .loading{position:fixed;inset:0;display:grid;place-items:center;font:500 14px var(--f-ui);color:var(--ink-soft);letter-spacing:.2em;transition:opacity .6s;pointer-events:none}
 
 @media (max-width:760px){
   .brand{padding:8px 12px 8px 8px}.seal{width:32px;height:32px;font-size:18px;line-height:32px}
   .brand h1{font-size:17px}.brand p{font-size:9px}
-  .dir{top:auto;right:16px;left:16px;width:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 66px);padding:6px}
-  .dir h2{display:none}
-  .dir ul{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px}
-  .dir li{flex:none}.dir button{padding:5px 8px}.dir .st{display:none}
+  .dir{top:calc(env(safe-area-inset-top,0px) + 76px);width:210px}
+  .dir .st{display:none}
   .hint{display:none}
   .card{left:16px;right:16px;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:none;width:auto;max-height:52%}
   .card h3{font-size:24px}
   .editbar{flex-direction:column;align-items:stretch;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 66px)}
   .editbar .acts{justify-content:flex-end}
-  body.has-card .bar,body.editing .dir{display:none}
+  body.has-card .bar{display:none}
 }
 @media (prefers-reduced-motion:reduce){.hot i::after{animation:none}}
 </style>
@@ -143,8 +163,8 @@ setTimeout(function(){ if(!window.__dcReady){ var f=document.getElementById('fal
   <div><h1 id="tTitle">梦之城</h1><p id="tSub">旅行手帐 · 走过的城市</p></div>
 </header>
 
-<nav class="dir glass" aria-label="城市目录">
-  <h2 id="tDir">城市目录</h2>
+<nav class="dir glass collapsed" id="dir" aria-label="城市目录">
+  <button class="dirtoggle" id="dirToggle" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span id="tDir">城市目录</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
   <ul id="dirList"></ul>
 </nav>
 
@@ -154,15 +174,26 @@ setTimeout(function(){ if(!window.__dcReady){ var f=document.getElementById('fal
   <button class="btn" id="bHome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span id="tHome">全景</span></button>
   <button class="btn primary" id="bEdit" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg><span id="tEdit">编辑城市</span></button>
   <span class="sep"></span>
+  <button class="btn sea" data-sea="spring" aria-pressed="false"><span data-t="spring">春</span></button>
+  <button class="btn sea" data-sea="summer" aria-pressed="false"><span data-t="summer">夏</span></button>
+  <button class="btn sea" data-sea="autumn" aria-pressed="false"><span data-t="autumn">秋</span></button>
+  <button class="btn sea" data-sea="winter" aria-pressed="false"><span data-t="winter">冬</span></button>
+  <span class="sep"></span>
   <button class="btn tod" data-tod="day" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg><span data-t="day">昼</span></button>
   <button class="btn tod" data-tod="dusk" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h16M7 14a5 5 0 0 1 10 0M12 4v4M5 9l2 2M19 9l-2 2"/></svg><span data-t="dusk">黄昏</span></button>
   <button class="btn tod" data-tod="night" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/></svg><span data-t="night">夜</span></button>
   <span class="sep"></span>
-  <button class="btn" id="bRain" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15a4 4 0 0 1 .5-8A5 5 0 0 1 17 8a3.5 3.5 0 0 1 0 7z"/><path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2"/></svg><span id="tRain">下雨</span></button>
+  <button class="btn" id="bMusic" aria-pressed="false" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span id="tMusic">音乐</span></button>
   <button class="btn" id="bLang"><span id="tLang">EN</span></button>
   <a class="btn" id="bList" href="list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span id="tList">列表</span></a>
 </div>
 
+<div class="mpanel glass" id="mpanel" hidden>
+  <div class="mhead"><button class="mplay" id="mPlay" aria-label="播放"><svg viewBox="0 0 24 24" fill="currentColor"><path id="mIcon" d="M8 5v14l11-7z"/></svg></button>
+    <div class="mnow"><small id="mNowLbl">正在播放</small><b id="mNow">—</b></div></div>
+  <div class="mlist" id="mList" role="radiogroup"></div>
+  <p class="mcred" id="mCred"></p>
+</div>
 <div class="editbar glass" id="editbar" hidden>
   <p id="tEditMsg"><b>编辑模式</b>：按住街区拖到别的格子，两块会互换位置；选中后点「旋转」转 90°。相邻的城市之间会自动长出城门，电车轨道也会沿着新的城市边缘重新铺好。</p>
   <div class="acts">
@@ -179,7 +210,6 @@ setTimeout(function(){ if(!window.__dcReady){ var f=document.getElementById('fal
   <p class="en" id="cEn"></p>
   <div class="meta" id="cMeta"></div>
   <p class="line" id="cLine"></p>
-  <p class="conn" id="cConn"></p>
   <button class="open" id="cOpen"></button>
   <p class="tip" id="cTip"></p>
 </aside>
@@ -199,6 +229,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 
 /* ───────────────────────── basics ───────────────────────── */
 const COLS = 4, ROWS = 3, CELL = 12, TILE = 11.9, TOP = 1.6, WATER_Y = 0.95;
@@ -324,6 +355,8 @@ function G(color, emissive, k = 2.2, base = 0, o = {}) {
   m.userData.glow = { k, base, flick: o.flick || 0, ph: R() * 10 };
   GLOWS.push(m); return m;
 }
+const SEAS = [];
+function seasonal(m, kind) { if (!m.userData.sk) { m.userData.sk = kind; m.userData.base = m.color.clone(); m.userData.target = m.color.clone(); SEAS.push(m); } return m; }
 const MAT = {
   rock: M('#544c46', { r: .95 }), soil: M('#7d5c42', { r: .95 }), soil2: M('#94704f', { r: .95 }),
   walk: M('#d9d3c8', { map: rep(TEX.pave, 6, 6), r: .7 }),
@@ -333,7 +366,7 @@ const MAT = {
   stone: M('#d7d0c3', { r: .85 }), stoneW: M('#ece6da', { r: .8 }), skin: M('#f0c9a5', { r: .7 }),
   black: M('#262428', { r: .5 }), white: M('#f4f1ea', { r: .7 }), metal: M('#8a8f98', { r: .35, m: .8 }),
 };
-WET.push(MAT.walk);
+WET.push(MAT.walk); seasonal(MAT.walk, 'pave'); seasonal(MAT.grass, 'ground'); seasonal(MAT.grassD, 'ground');
 const LANTERN_RED = G('#c0392b', '#ff4a24', 2.6, .25, { r: .5 });
 const LANTERN_WARM = G('#f3e3c4', '#ffc46b', 2.4, .1, { r: .6 });
 const WIN_WARM = G('#3a3330', '#ffbf6e', 1.9, .05, { r: .3 });
@@ -369,10 +402,11 @@ function gableRoof(span, len, h, mat, up = .14, ov = .35, thick = .07) {
   }
   return new THREE.Mesh(g, mat);
 }
-const roofMat = (c) => M(c, { map: rep(TEX.roofU, 40, 1), r: .55, flat: true, side: THREE.DoubleSide });
-const gableMat = (c) => M(c, { map: rep(TEX.roofV, 1, 6), r: .55, flat: true, side: THREE.DoubleSide });
+const roofMat = (c) => seasonal(M(c, { map: rep(TEX.roofU, 40, 1), r: .55, flat: true, side: THREE.DoubleSide }), 'roof');
+const gableMat = (c) => seasonal(M(c, { map: rep(TEX.roofV, 1, 6), r: .55, flat: true, side: THREE.DoubleSide }), 'roof');
 
 // blobby foliage
+const SAKURA = ['#f6b7c8', '#f9cdda', '#eea2b8', '#fbe0e8'];
 const BLOBS = [1, 2, 3].map(seed => {
   let g = new THREE.IcosahedronGeometry(1, 2); g.deleteAttribute('normal'); g.deleteAttribute('uv'); g = mergeVertices(g);
   const p = g.attributes.position, v = new V3();
@@ -386,12 +420,11 @@ function tree(parent, x, z, o = {}) {
   const n = o.n ?? 6;
   for (let i = 0; i < n; i++) {
     const a = r() * Math.PI * 2, d = (i === 0 ? 0 : .28 + r() * .32) * s;
-    const m = add(grp, BLOBS[i % 3], M(pick(cols, r), { r: .9 }), Math.cos(a) * d, h + (i === 0 ? .25 : r() * .5 - .05) * s, Math.sin(a) * d);
+    const m = add(grp, BLOBS[i % 3], seasonal(M(pick(cols, r), { r: .9 }), cols === SAKURA ? 'sakura' : 'leaf'), Math.cos(a) * d, h + (i === 0 ? .25 : r() * .5 - .05) * s, Math.sin(a) * d);
     const sc = (i === 0 ? .62 : .36 + r() * .2) * s; m.scale.set(sc, sc * (o.ys ?? .9), sc); m.rotation.set(r() * 3, r() * 3, 0);
   }
   return grp;
 }
-const SAKURA = ['#f6b7c8', '#f9cdda', '#eea2b8', '#fbe0e8'];
 function person(parent, x, z, color, ry = 0) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; parent.add(g);
   add(g, new THREE.CapsuleGeometry(.075, .17, 3, 8), M(color, { r: .8 }), 0, .17, 0);
@@ -410,6 +443,31 @@ function lampPost(parent, x, z, h = 1.05) {
   add(parent, cyl(.025, .035, h, 6), MAT.dark, x, h / 2, z);
   add(parent, sph(.07, 10, 8), LANTERN_WARM, x, h + .04, z);
   add(parent, cyl(.0, .09, .07, 6), MAT.dark, x, h + .13, z);
+}
+function bench(parent, x, z, ry = 0) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; parent.add(g);
+  const wood = M('#8a5a3a', { r: .7 });
+  boxOn(g, .5, .03, .14, wood, 0, .14, 0, .01); boxOn(g, .5, .1, .025, wood, 0, .19, -.065, .008);
+  [-.2, .2].forEach(dx => boxOn(g, .03, .14, .12, MAT.dark, dx, 0, 0, .005));
+}
+function planter(parent, x, z, cols = ['#e2457f', '#f4d36b', '#ffffff', '#c24a8a']) {
+  boxOn(parent, .36, .16, .2, M('#b9b0a2', { r: .85 }), x, 0, z, .02);
+  const b = add(parent, BLOBS[1], seasonal(M('#6c8f42'), 'leaf'), x, .22, z); b.scale.set(.18, .1, .1);
+  for (let i = 0; i < 4; i++) { const f = add(parent, sph(.03, 6, 5), M(pick(cols)), x - .12 + i * .08, .28, z + (R() - .5) * .06); }
+}
+function flowerPot(parent, x, z) {
+  add(parent, cyl(.07, .05, .12, 8), M('#b5653d', { r: .8 }), x, .06, z);
+  const b = add(parent, BLOBS[2], seasonal(M('#5f8a3c'), 'leaf'), x, .19, z); b.scale.setScalar(.09);
+}
+function bike(parent, x, z, ry = 0, col = '#3a5a7a') {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; parent.add(g);
+  const w = new THREE.TorusGeometry(.07, .012, 5, 14);
+  [-.1, .1].forEach(dx => add(g, w, MAT.dark, dx, .07, 0));
+  const fm = M(col, { r: .4, m: .3 });
+  add(g, rb(.22, .015, .015, .005), fm, 0, .12, 0).rotation.z = .1;
+  add(g, rb(.015, .1, .015, .005), fm, -.03, .12, 0);
+  add(g, rb(.05, .015, .03, .005), MAT.dark, -.04, .17, 0);
+  add(g, rb(.015, .015, .1, .005), MAT.dark, .09, .18, 0);
 }
 function stoneLantern(parent, x, z) {
   add(parent, cyl(.12, .14, .08, 6), MAT.stone, x, .04, z);
@@ -505,6 +563,10 @@ function makeTile(id, groundMat) {
   [[0, e - wv, TILE - 2 * wv + .1, .08], [0, -e + wv, TILE - 2 * wv + .1, .08], [e - wv, 0, .08, TILE - 2 * wv], [-e + wv, 0, .08, TILE - 2 * wv]]
     .forEach(([x, z, w, d]) => boxOn(body, w, .1, d, MAT.stone, x, TOP - .01, z, .02));
   [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([sx, sz]) => lampPost(body, sx * (e - .25), sz * (e - .25)));
+  const fur = new THREE.Group(); fur.position.y = TOP + .015; body.add(fur); const inner = e - 1.12;
+  [-2.6, 2.6].forEach(t => { bench(fur, t, inner, Math.PI); bench(fur, t, -inner, 0); bench(fur, inner, t, -Math.PI / 2); bench(fur, -inner, t, Math.PI / 2); });
+  [-.9, .9].forEach(t => { planter(fur, t * 4.2, inner + .02); planter(fur, t * 4.2, -inner - .02); });
+  for (const sx of [-1, 1]) for (const k of [-1.3, 1.3]) lampPost(fur, sx * (e - 1.14), k, .85);
   T.top.position.y = TOP; body.add(T.top);
   // selection frame
   const fm = new THREE.MeshBasicMaterial({ color: '#f2c45a', transparent: true, opacity: 0, depthWrite: false });
@@ -518,7 +580,7 @@ function hot(T, obj, key) { obj.userData.hot = key; T.hot.push({ obj, key }); }
 /* ─── 西安 ─── */
 function buildXian(T) {
   const g = T.top;
-  const pave = M('#d9cdb6', { map: rep(TEX.pave, 5, 5), r: .75 }); WET.push(pave);
+  const pave = seasonal(M('#d9cdb6', { map: rep(TEX.pave, 5, 5), r: .75 }), 'pave'); WET.push(pave);
   boxOn(g, 9.3, .04, 9.3, pave, 0, -.03, 0, .01);
   const brick = M('#9c9283', { map: rep(TEX.brick, 5, 1), r: .9 });
   const brickS = M('#9c9283', { map: rep(TEX.brick, 1.2, 1), r: .9 });
@@ -581,6 +643,29 @@ function buildXian(T) {
   [[3.7, -2.6], [3.9, -.9], [-2.9, -2.6], [-1.6, -1.3], [3.8, 1.6]].forEach(([x, z], i) => tree(g, x, z, { s: .9 + R() * .3, colors: ['#7f9d4c', '#94b35b', '#6b8a3f'], ys: 1.15 }));
   tree(g, -3.4, 4.0, { s: .8 });
   // sky lanterns
+  // terracotta army pit 兵马俑
+  const pit = new THREE.Group(); pit.position.set(-1.95, 0, .35); g.add(pit);
+  boxOn(pit, 2.3, .06, 1.5, M('#8b6a4c', { r: 1 }), 0, 0, 0, .02);
+  [[0, .72, 2.3, .1], [0, -.72, 2.3, .1], [1.12, 0, .1, 1.5], [-1.12, 0, .1, 1.5]].forEach(([x, z, w, d]) => boxOn(pit, w, .16, d, M('#a88663'), x, 0, z, .02));
+  for (let rI = 0; rI < 3; rI++) boxOn(pit, 2.0, .1, .06, M('#9c7a58'), 0, 0, -.42 + rI * .42 + .21, .01);
+  const terra = M('#a8795a', { r: .95 }), terraD = M('#8e6447', { r: .95 });
+  for (let rI = 0; rI < 3; rI++) for (let c = 0; c < 6; c++) {
+    const x = -.85 + c * .34, z = -.5 + rI * .42 + .05;
+    add(pit, cyl(.045, .06, .2, 8), terra, x, .16, z); add(pit, sph(.04, 8, 6), terraD, x, .3, z); add(pit, cyl(.025, .025, .03, 6), terraD, x, .345, z);
+  }
+  [-.55, .55].forEach(x => { const hg = new THREE.Group(); hg.position.set(x, .06, -.62 + .02); pit.add(hg);
+    boxOn(hg, .1, .1, .26, terra, 0, .12, 0, .03); add(hg, rb(.06, .12, .08, .02), terra, 0, .27, .14).rotation.x = -.5;
+    [[-.035, -.09], [.035, -.09], [-.035, .09], [.035, .09]].forEach(([a, b]) => add(hg, cyl(.015, .015, .14, 5), terra, a, .07, b)); });
+  // plaza ring around the bell tower, palace lanterns, flags on the wall
+  add(g, new THREE.RingGeometry(2.05, 2.25, 40), M('#b9ab92', { r: .8, side: THREE.DoubleSide }), 1.3, .012, .2).rotation.x = -Math.PI / 2;
+  [[-.4, -1.6], [3.0, -1.6], [-.4, 2.0], [3.0, 2.0]].forEach(([x, z]) => { add(g, cyl(.025, .03, .9, 6), MAT.red, x, .45, z); boxOn(g, .3, .03, .03, MAT.red, x, .86, z, .01); redLantern(g, x - .12, .74, z, .7); redLantern(g, x + .12, .74, z, .7); });
+  const flagM = [M('#c0392b', { side: THREE.DoubleSide, r: .9 }), M('#e2b13c', { side: THREE.DoubleSide, r: .9 })];
+  for (let i = 0; i < 7; i++) { const x = -3.2 + i * 1.15; if (Math.abs(x) < .9) continue; add(g, cyl(.012, .012, .7, 5), MAT.dark, x, WH + .35, -4.5); const f = add(g, new THREE.PlaneGeometry(.32, .2), flagM[i % 2], x + .17, WH + .58, -4.5); f.rotation.y = .15; }
+  for (let i = 0; i < 6; i++) { const z = -2.6 + i * 1.15; add(g, cyl(.012, .012, .7, 5), MAT.dark, -4.5, WH + .35, z); const f = add(g, new THREE.PlaneGeometry(.32, .2), flagM[(i + 1) % 2], -4.5, WH + .58, z + .17); f.rotation.y = Math.PI / 2 + .15; }
+  // stone lions at the gate, pots and bikes on the street
+  [-.75, .75].forEach(x => { boxOn(g, .2, .12, .24, MAT.stone, x, 0, -3.2, .02); add(g, sph(.09, 8, 6), MAT.stone, x, .2, -3.2).scale.set(1, 1.1, 1.2); add(g, sph(.06, 8, 6), MAT.stone, x, .32, -3.13); });
+  [[.2, 3.0], [3.5, 3.0], [-.4, -2.4], [3.1, -2.6]].forEach(([x, z]) => flowerPot(g, x, z));
+  bike(g, 4.0, 3.4, .3, '#2f6f6a'); bike(g, 4.1, 3.1, .3, '#b8402c');
   T.sky = skyLanterns(g, 22, 4.2);
   T.labelH = 6.4;
 }
@@ -603,7 +688,7 @@ function buildLuoyang(T) {
     }
     geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); geo.computeVertexNormals();
     add(g, geo, sand, x, h / 2, -3.85);
-    if (i < 6) { const tg = add(g, BLOBS[i % 3], M('#6f8d48'), x + .2, h + .1, -3.9); tg.scale.set(.55, .3, .5); }
+    if (i < 6) { const tg = add(g, BLOBS[i % 3], seasonal(M('#6f8d48'), 'leaf'), x + .2, h + .1, -3.9); tg.scale.set(.55, .3, .5); }
   }
   // niches
   const nich = M('#4c3e33', { r: 1 }), statue = M('#cdb894', { r: .92 });
@@ -661,7 +746,7 @@ function buildLuoyang(T) {
     boxOn(pe, x1 - x0 + .2, .1, z1 - z0 + .2, M('#7a5a40'), (x0 + x1) / 2, 0, (z0 + z1) / 2, .03);
     fence(pe, x0 - .1, z1 + .1, x1 + .1, z1 + .1, M('#e8e0d0'), .16);
     for (let x = x0 + .15; x <= x1; x += .32) for (let z = z0 + .15; z <= z1; z += .32) {
-      const b = add(pe, BLOBS[(x * 10 | 0) % 3], M('#5f7f3c'), x + (R() - .5) * .08, .16, z); b.scale.setScalar(.15);
+      const b = add(pe, BLOBS[(x * 10 | 0) % 3], seasonal(M('#5f7f3c'), 'leaf'), x + (R() - .5) * .08, .16, z); b.scale.setScalar(.15);
       const f = add(pe, BLOBS[(z * 10 | 0) % 3], M(pick(PC)), x + (R() - .5) * .1, .3, z + (R() - .5) * .1); f.scale.setScalar(.075 + R() * .03); f.userData.flower = true;
     }
   });
@@ -669,7 +754,26 @@ function buildLuoyang(T) {
   crowd(g, 6, 1.6, 4.3, 3.9, 4.5); crowd(g, 4, -3, 1, .2, 1.4);
   [[-3.8, 4.1], [4.2, -.1], [-4.2, -.1]].forEach(([x, z]) => tree(g, x, z, { s: .8 }));
   warmLight(g, -.9, 2.3, 3.4, '#ffae63', 18, 9);
-  T.petals = petals(g, 120, PC, 'swirl');
+  // river railing, willows, lantern string along the grottoes, white horse, boat
+  for (let x = -4.5; x <= 4.5; x += .42) { if (Math.abs(x - 2.6) < .6) continue; add(g, rb(.06, .26, .06, .015), MAT.stoneW, x, .13, -.2); add(g, rb(.06, .26, .06, .015), MAT.stoneW, x, .13, -1.9); }
+  [[-4.5, 2.0], [3.2, 4.5]].forEach(([a, b]) => { boxOn(g, b - a, .04, .05, MAT.stoneW, (a + b) / 2, .22, -.2, .01); boxOn(g, b - a, .04, .05, MAT.stoneW, (a + b) / 2, .22, -1.9, .01); });
+  [[.4, .15], [-1.9, .15]].forEach(([x, z]) => tree(g, x, z, { s: .75, colors: ['#8fb04f', '#a3c25e', '#7a9a45'], ys: 1.25 }));
+  for (let i = 0; i < 10; i++) { const x = -4.2 + i * .93; if (Math.abs(x) < 1.9) continue; redLantern(g, x, 1.0, -2.92, .65); }
+  const horse = new THREE.Group(); horse.position.set(2.7, 0, -2.75); horse.rotation.y = -.6; g.add(horse);
+  const wh = M('#f1ede4', { r: .6 });
+  boxOn(horse, .5, .18, .5, MAT.stone, 0, 0, 0, .03);
+  boxOn(horse, .16, .16, .42, wh, 0, .42, 0, .07);
+  add(horse, rb(.1, .24, .12, .04), wh, 0, .62, .2).rotation.x = -.45;
+  add(horse, rb(.09, .08, .18, .03), wh, 0, .72, .3);
+  [[-.05, -.15], [.05, -.15], [-.05, .15], [.05, .15]].forEach(([a, b]) => add(horse, cyl(.025, .02, .26, 6), wh, a, .31, b));
+  add(horse, cyl(.01, .02, .2, 5), wh, 0, .45, -.24).rotation.x = .6;
+  const boat = new THREE.Group(); g.add(boat); boat.position.set(-2.2, .03, -1.05);
+  boxOn(boat, .7, .1, .24, M('#6b4430', { map: rep(TEX.plank, 2, 1) }), 0, 0, 0, .05);
+  const can = add(boat, new THREE.CylinderGeometry(.16, .16, .34, 10, 1, true, 0, Math.PI), M('#3e4a3a', { side: THREE.DoubleSide, r: .9 }), 0, .14, 0); can.rotation.set(0, 0, Math.PI / 2); can.rotation.order = 'ZYX'; can.rotation.y = Math.PI / 2;
+  person(boat, .26, 0, '#5a6a7a', Math.PI / 2);
+  T.keep = [boat]; ANIMS.push((dt, t) => { boat.position.x = -2.2 + Math.sin(t * .08) * 1.6; boat.rotation.y = Math.cos(t * .08) > 0 ? 0 : Math.PI; boat.position.y = .03 + Math.sin(t * 1.4) * .01; });
+  crowd(g, 4, 2.3, 2.9, -1.4, -.7);
+  T.petals = petals(g, 120, PC, 'swirl'); T.petalPal = PC;
   T.labelH = 5.6;
 }
 
@@ -742,7 +846,23 @@ function buildTokyo(T) {
   [-1, 1].forEach(s => add(cat, new THREE.ConeGeometry(.025, .05, 4), catM, s * .035, .23, .11));
   add(cat, cyl(.015, .015, .18, 5), catM, 0, .14, -.15).rotation.x = .6;
   warmLight(g, -2, 1.6, 2.6, '#ffc37a', 16, 8);
-  T.petals = petals(g, 140, SAKURA, 'fall');
+  // Kaminarimon-style gate with the big red lantern
+  const km = new THREE.Group(); km.position.set(2.0, 0, 2.75); g.add(km);
+  [[-.85, -.18], [-.85, .18], [.85, -.18], [.85, .18]].forEach(([x, z]) => add(km, cyl(.07, .08, 1.5, 10), MAT.vermil, x, .75, z));
+  boxOn(km, 2.0, .14, .5, MAT.vermil, 0, 1.45, 0, .02);
+  const kr = gableRoof(.7, 2.2, .42, gableMat('#3a3d44'), .12, .3); kr.position.y = 1.58; kr.rotation.y = Math.PI / 2; km.add(kr);
+  [-.92, .92].forEach(x => { boxOn(km, .28, 1.0, .5, M('#8a2a22', { r: .7 }), x * 1.12, 0, 0, .03); });
+  const big = add(km, sph(.3, 18, 14), G('#c0362b', '#ff4a24', 1.6, .15, { r: .55 }), 0, 1.08, 0); big.scale.set(1, 1.3, 1);
+  [.82, 1.34].forEach(y => add(km, cyl(.21, .21, .05, 16), MAT.black, 0, y, 0));
+  const kt = add(km, new THREE.PlaneGeometry(.3, .26), new THREE.MeshStandardMaterial({ map: textTex(['雷門'], { w: 128, h: 112, bg: '#c0362b', fg: '#1d1b1f', font: '700 52px "Noto Serif SC", serif', border: null }), roughness: .6, transparent: true }), 0, 1.08, .31);
+  // zebra crossing, noren curtains, paper lanterns, bikes, mailbox, pots
+  for (let i = 0; i < 7; i++) boxOn(g, .13, .012, 1.4, MAT.white, -1.95 + i * .24, 0, 3.1, .002);
+  const noren = [M('#2b3f63', { side: THREE.DoubleSide }), M('#7a2a2a', { side: THREE.DoubleSide }), M('#2f5a4a', { side: THREE.DoubleSide })];
+  for (let i = 0; i < 5; i++) { const x = -4.1 + i * 1.12; for (let k = 0; k < 3; k++) add(g, new THREE.PlaneGeometry(.13, .24), noren[i % 3], x - .15 + k * .15, .58, 1.64); const lt = add(g, sph(.06, 10, 8), LANTERN_WARM, x + .38, .7, 1.75); lt.scale.set(1, 1.3, 1); }
+  bike(g, -3.2, 1.95, Math.PI / 2 - .2, '#c9a53a'); bike(g, -2.95, 1.95, Math.PI / 2 - .2, '#3a5a7a'); bike(g, -.3, 1.95, Math.PI / 2 + .2, '#8a3a3a');
+  add(g, cyl(.08, .08, .4, 12), M('#c8312a', { r: .4 }), .55, .2, 1.85); add(g, sph(.08, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), M('#c8312a', { r: .4 }), .55, .4, 1.85);
+  [[-3.6, 1.72], [-2.5, 1.72], [-1.3, 1.72]].forEach(([x, z]) => flowerPot(g, x, z));
+  T.petals = petals(g, 140, SAKURA, 'fall'); T.petalPal = SAKURA;
   T.labelH = 6.6;
 }
 
@@ -763,7 +883,7 @@ function buildHK(T) {
   boxOn(tram, .82, .12, .33, WIN_WARM2, 0, .48, 0, .02); boxOn(tram, .82, .12, .33, WIN_WARM2, 0, .2, 0, .02);
   T.tramHK = tram;
   // Peak hill
-  const hill = add(g, BLOBS[2], M('#5f8a52', { flat: true, r: .95 }), -3.0, -.4, -3.0); hill.scale.set(1.9, 1.7, 1.7);
+  const hill = add(g, BLOBS[2], seasonal(M('#5f8a52', { flat: true, r: .95 }), 'leaf'), -3.0, -.4, -3.0); hill.scale.set(1.9, 1.7, 1.7);
   [[-3.6, -2.2], [-2.3, -3.6], [-3.4, -3.8], [-2.4, -2.4], [-4.0, -3.2]].forEach(([x, z]) => tree(g, x, z, { s: .55, h: 1.6, colors: ['#4f7a42', '#5f8a4a', '#466e3a'] }));
   boxOn(g, .5, .3, .5, MAT.white, -3.0, 1.5, -3.0, .1);
   // skyline
@@ -808,13 +928,37 @@ function buildHK(T) {
   T.ferry = ferry; ferry.position.set(0, .04, 2.0);
   crowd(g, 7, -4, 4, 1.0, 1.15); crowd(g, 4, -2, 3, .1, .25);
   warmLight(g, 0, 1.4, 1.0, '#ff7ad0', 14, 8); warmLight(g, 2.5, 3, -1, '#9fdcff', 12, 9);
+  // clock tower pier (Tsim Sha Tsui style), ferry pier, taxis, rooftop kit, billboards, more neon
+  boxOn(g, 1.3, .14, 1.3, MAT.stone, 3.75, 0, 2.0, .03);
+  const ct = new THREE.Group(); ct.position.set(3.75, .14, 2.0); g.add(ct);
+  const brick = M('#b8735a', { map: rep(TEX.brick, 1, 4), r: .85 });
+  boxOn(ct, .5, 2.4, .5, brick, 0, 0, 0, .02);
+  [.6, 1.2, 1.8].forEach(y => boxOn(ct, .54, .05, .54, MAT.stoneW, 0, y, 0, .01));
+  boxOn(ct, .44, .5, .44, MAT.stoneW, 0, 2.4, 0, .02);
+  for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2; const cf = add(ct, new THREE.CircleGeometry(.14, 20), G('#f5f0e2', '#fff1c8', 1.4, .1), Math.sin(a) * .225, 2.62, Math.cos(a) * .225); cf.rotation.y = a; }
+  const dome = add(ct, sph(.18, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), M('#5a6a5a', { r: .5, m: .4 }), 0, 2.9, 0);
+  add(ct, cyl(.008, .015, .35, 5), MAT.gold, 0, 3.2, 0);
+  boxOn(g, 1.5, .1, .7, M('#cfc6b6'), -3.4, 0, 1.6, .02);
+  const shed = gableRoof(.7, 1.4, .25, gableMat('#2e7a54'), .04, .12); shed.position.set(-3.4, .7, 1.6); shed.rotation.y = Math.PI / 2; g.add(shed);
+  [[-4.0, 1.35], [-2.8, 1.35], [-4.0, 1.85], [-2.8, 1.85]].forEach(([x, z]) => add(g, cyl(.025, .025, .6, 6), MAT.white, x, .4, z));
+  const taxiM = M('#c8312a', { r: .35, m: .2 }), taxiTop = M('#e9e2d2', { r: .5 });
+  const taxis = [];
+  for (let i = 0; i < 3; i++) { const tx = new THREE.Group(); tx.position.set(-3 + i * 2.4, 0, .28); g.add(tx);
+    boxOn(tx, .42, .1, .2, taxiM, 0, .03, 0, .04); boxOn(tx, .24, .08, .18, taxiTop, -.02, .13, 0, .03); boxOn(tx, .22, .05, .185, WIN_WARM2, -.02, .15, 0, .01);
+    [[-.13, -.1], [.13, -.1], [-.13, .1], [.13, .1]].forEach(([a, b]) => add(tx, cyl(.035, .035, .03, 8), MAT.dark, a, .035, b).rotation.x = Math.PI / 2);
+    taxis.push(tx); }
+  T.keep = taxis; ANIMS.push((dt, t) => taxis.forEach((tx, i) => { tx.position.x = ((t * (.5 + i * .12) + i * 3) % 9.4) - 4.7; }));
+  towers.forEach(([x, z, w, h, kind], i) => { if (kind !== 'c' || h > 3.2) return; add(g, cyl(.09, .09, .16, 10), M('#8a8f98', { r: .5, m: .5 }), x - w * .2, h + .08, z); boxOn(g, w * .35, .1, w * .25, M('#a0a4aa'), x + w * .18, h, z, .02); });
+  [[.2, -3.6 + .46, 3.6, '#ff3d8b', '維港'], [1.2, -2.2 + .46, 2.8, '#35e0ff', '夜景']].forEach(([x, z, y, c, t]) => { const m = G('#ffffff', c, 1.6, .25, { map: textTex([t], { w: 256, h: 128, bg: '#120e1c', fg: c, font: '700 70px "Noto Serif SC", serif', border: c }) }); m.emissiveMap = m.map; NEON.push(m); add(g, new THREE.PlaneGeometry(.7, .35), m, x, y, z); });
+  const NC2 = ['#ffd23d', '#ff5a3d', '#7cff9a', '#35e0ff', '#ff3d8b'];
+  [[-2.8, .7, '涼茶'], [-1.5, .95, '麵家'], [-.3, .75, '燒臘'], [1.1, .85, '找換'], [2.3, .7, '當舖']].forEach(([x, y, t], i) => { const c = NC2[i]; const m = G('#ffffff', c, 2.4, .4, { flick: .4, map: textTex([t], { w: 192, h: 80, bg: '#1b1626', fg: c, font: '700 46px "Noto Serif SC", serif', border: c }) }); m.emissiveMap = m.map; NEON.push(m); add(g, new THREE.PlaneGeometry(.42, .18), m, x, y, .16); });
   T.labelH = 11.6;
 }
 
 /* ─── 待建地块 ─── */
 function buildPlot(T, name) {
   const g = T.top;
-  const dirt = M('#b08c62', { map: rep(TEX.grass, 4, 4), r: .95 });
+  const dirt = seasonal(M('#b08c62', { map: rep(TEX.grass, 4, 4), r: .95 }), 'ground');
   boxOn(g, 9.3, .04, 9.3, dirt, 0, -.03, 0, .01);
   for (let i = 0; i < 4; i++) boxOn(g, 1.6 + R() * 1.5, .05, 1.6 + R() * 1.5, MAT.grassD, -3 + R() * 6, -.01, -3 + R() * 6, .3);
   // barrier fence
@@ -850,7 +994,7 @@ function petals(parent, n, colors, mode) {
   const st = []; const col = new THREE.Color();
   for (let i = 0; i < n; i++) { st.push({ x: (R() - .5) * 11, y: R() * 7, z: (R() - .5) * 11, a: R() * 6.28, r: 1 + R() * 4, s: .4 + R() * .6, rx: R() * 6, ry: R() * 6, w: .5 + R() }); im.setColorAt(i, col.set(pick(colors))); }
   const d = new THREE.Object3D();
-  const sys = { im, boost: 0, on: true, update(dt, t) {
+  const sys = { im, boost: 0, on: true, recolor(pal) { for (let i = 0; i < n; i++) im.setColorAt(i, col.set(pick(pal))); im.instanceColor.needsUpdate = true; }, update(dt, t) {
     const b = 1 + this.boost * 3; this.boost = Math.max(0, this.boost - dt * .35);
     for (let i = 0; i < n; i++) {
       const p = st[i];
@@ -878,6 +1022,17 @@ function skyLanterns(parent, n, spread) {
   PARTICLES.push(sys); return sys;
 }
 // rain
+const dotTex = ctex(cnv(64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.45, 'rgba(255,255,255,.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); }));
+const SNOW_N = LITE ? 600 : 1600, snowPos = new Float32Array(SNOW_N * 3), snowSt = [];
+for (let i = 0; i < SNOW_N; i++) { snowSt.push({ v: .8 + R() * .9, ph: R() * 6.28 }); snowPos.set([(R() - .5) * 58, R() * 26, (R() - .5) * 44], i * 3); }
+const snowGeo = new THREE.BufferGeometry(); snowGeo.setAttribute('position', new THREE.BufferAttribute(snowPos, 3));
+const snowMat = new THREE.PointsMaterial({ color: '#ffffff', size: .3, map: dotTex, transparent: true, opacity: 0, depthWrite: false });
+const snow = new THREE.Points(snowGeo, snowMat); snow.frustumCulled = false; scene.add(snow);
+const FF_N = LITE ? 60 : 140, ffPos = new Float32Array(FF_N * 3), ffSt = [];
+for (let i = 0; i < FF_N; i++) { ffSt.push({ x: (R() - .5) * 46, z: (R() - .5) * 34, y: TOP + .3 + R() * 1.6, ph: R() * 6.28, sp: .3 + R() * .5 }); }
+const ffGeo = new THREE.BufferGeometry(); ffGeo.setAttribute('position', new THREE.BufferAttribute(ffPos, 3));
+const ffMat = new THREE.PointsMaterial({ color: '#d8ff7a', size: .3, map: dotTex, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
+const fireflies = new THREE.Points(ffGeo, ffMat); fireflies.frustumCulled = false; scene.add(fireflies);
 const RAIN_N = LITE ? 700 : 1800;
 const rainPos = new Float32Array(RAIN_N * 6);
 const rainGeo = new THREE.BufferGeometry(); rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
@@ -887,9 +1042,9 @@ const rainSt = []; for (let i = 0; i < RAIN_N; i++) rainSt.push({ x: (R() - .5) 
 
 /* ───────────────────────── build the city ───────────────────────── */
 const CITY = {
-  xian:   { seal: '長', color: '#a5302a', name: { zh: '西安', en: "Xi'an" }, sub: { zh: '城墙与钟楼', en: 'City Wall & Bell Tower' }, eyebrow: { zh: '古都走廊 · 第一站', en: 'Ancient Capitals · Stop 1' }, meta: { zh: ['2026 夏', '4 天'], en: ['Summer 2026', '4 days'] }, line: { zh: '永兴坊 · 城墙 · 大雁塔 · 碑林 · 赳赳大秦 · 兵马俑', en: 'Yongxingfang · City Wall · Wild Goose Pagoda · Stele Forest · Mighty Qin · Terracotta Army' }, status: 'done', url: 'xian-2026/', hot: { zh: '敲钟', en: 'Ring the bell' } },
-  luoyang:{ seal: '洛', color: '#c2457a', name: { zh: '洛阳', en: 'Luoyang' }, sub: { zh: '龙门与牡丹', en: 'Longmen & Peonies' }, eyebrow: { zh: '古都走廊 · 第二站', en: 'Ancient Capitals · Stop 2' }, meta: { zh: ['2026 夏', '3 天'], en: ['Summer 2026', '3 days'] }, line: { zh: '白马寺 · 龙门石窟 · 古墓博物馆 · 西工小街 · 关林 · 洛邑古城', en: 'White Horse Temple · Longmen Grottoes · Ancient Tombs Museum · Xigong lanes · Guanlin · Luoyi Old Town' }, status: 'wip', hot: { zh: '催开牡丹', en: 'Make the peonies bloom' } },
-  tokyo:  { seal: '東', color: '#d24a2c', name: { zh: '东京', en: 'Tokyo' }, sub: { zh: '浅草与昭和小街', en: 'Asakusa & Shōwa Lanes' }, eyebrow: { zh: '日本 · 散步手帐', en: 'Japan · Walking Journal' }, meta: { zh: ['2026 夏', '4 天'], en: ['Summer 2026', '4 days'] }, line: { zh: '浅草 · 筑地 · 谷根千 · 涩谷 · 表参道 · 丸之内', en: 'Asakusa · Tsukiji · Yanesen · Shibuya · Omotesandō · Marunouchi' }, status: 'done', url: 'tokyo-2026/', hot: { zh: '穿过鸟居', en: 'Walk through the torii' } },
+  xian:   { seal: '長', color: '#a5302a', name: { zh: '西安', en: "Xi'an" }, sub: { zh: '城墙与钟楼', en: 'City Wall & Bell Tower' }, eyebrow: { zh: '古都走廊 · 第一站', en: 'Ancient Capitals · Stop 1' }, meta: { zh: ['2026', '4 天'], en: ['2026', '4 days'] }, line: { zh: '永兴坊 · 城墙 · 大雁塔 · 碑林 · 赳赳大秦 · 兵马俑', en: 'Yongxingfang · City Wall · Wild Goose Pagoda · Stele Forest · Mighty Qin · Terracotta Army' }, status: 'done', url: 'xian-2026/', hot: { zh: '敲钟', en: 'Ring the bell' } },
+  luoyang:{ seal: '洛', color: '#c2457a', name: { zh: '洛阳', en: 'Luoyang' }, sub: { zh: '龙门与牡丹', en: 'Longmen & Peonies' }, eyebrow: { zh: '古都走廊 · 第二站', en: 'Ancient Capitals · Stop 2' }, meta: { zh: ['2026', '3 天'], en: ['2026', '3 days'] }, line: { zh: '白马寺 · 龙门石窟 · 古墓博物馆 · 西工小街 · 关林 · 洛邑古城', en: 'White Horse Temple · Longmen Grottoes · Ancient Tombs Museum · Xigong lanes · Guanlin · Luoyi Old Town' }, status: 'wip', hot: { zh: '催开牡丹', en: 'Make the peonies bloom' } },
+  tokyo:  { seal: '東', color: '#d24a2c', name: { zh: '东京', en: 'Tokyo' }, sub: { zh: '浅草与昭和小街', en: 'Asakusa & Shōwa Lanes' }, eyebrow: { zh: '日本 · 散步手帐', en: 'Japan · Walking Journal' }, meta: { zh: ['2026', '4 天'], en: ['2026', '4 days'] }, line: { zh: '浅草 · 筑地 · 谷根千 · 涩谷 · 表参道 · 丸之内', en: 'Asakusa · Tsukiji · Yanesen · Shibuya · Omotesandō · Marunouchi' }, status: 'done', url: 'tokyo-2026/', hot: { zh: '穿过鸟居', en: 'Walk through the torii' } },
   hk:     { seal: '港', color: '#2d7a8b', name: { zh: '香港', en: 'Hong Kong' }, sub: { zh: '维多利亚港', en: 'Victoria Harbour' }, eyebrow: { zh: '香港', en: 'Hong Kong' }, meta: { zh: ['日期待补'], en: ['Dates to add'] }, line: { zh: '维港 · 天星小轮 · 叮叮车 · 太平山（示意）', en: 'Victoria Harbour · Star Ferry · Ding-ding tram · The Peak (placeholder)' }, status: 'todo', hot: { zh: '扬帆夜游', en: 'Set sail' } },
   na:     { seal: '美', color: '#8a8378', plot: true, name: { zh: '北美', en: 'North America' }, sub: { zh: '待建地块', en: 'Plot reserved' }, eyebrow: { zh: '下一块地', en: 'Next plot' }, meta: { zh: ['待建'], en: ['Coming soon'] }, line: { zh: '去过以后，这块地会盖起新的街区。', en: 'Once we travel here, a new district goes up on this plot.' }, status: 'todo', hot: { zh: '转动塔吊', en: 'Turn the crane' } },
   eu:     { seal: '歐', color: '#8a8378', plot: true, name: { zh: '欧洲', en: 'Europe' }, sub: { zh: '待建地块', en: 'Plot reserved' }, eyebrow: { zh: '下一块地', en: 'Next plot' }, meta: { zh: ['待建'], en: ['Coming soon'] }, line: { zh: '去过以后，这块地会盖起新的街区。', en: 'Once we travel here, a new district goes up on this plot.' }, status: 'todo', hot: { zh: '转动塔吊', en: 'Turn the crane' } },
@@ -898,6 +1053,7 @@ const ORDER = ['xian', 'luoyang', 'tokyo', 'hk', 'na', 'eu'];
 const DEFAULT = { luoyang: [0, 1, 0], xian: [1, 1, 0], tokyo: [2, 1, 0], hk: [2, 0, 0], na: [3, 1, 0], eu: [1, 2, 0] };
 const BUILDERS = { xian: buildXian, luoyang: buildLuoyang, tokyo: buildTokyo, hk: buildHK };
 const GROUNDS = { xian: M('#a9b47c', { map: rep(TEX.grass, 4, 4) }), luoyang: MAT.grass, tokyo: M('#9fb27a', { map: rep(TEX.grass, 4, 4) }), hk: MAT.grassD, na: M('#b8a07a'), eu: M('#b8a07a') };
+Object.values(GROUNDS).forEach(m => seasonal(m, 'ground'));
 const byId = {};
 for (const id of ORDER) {
   const T = makeTile(id, GROUNDS[id]); byId[id] = T;
@@ -907,7 +1063,7 @@ for (const id of ORDER) {
 // bake static meshes per tile → far fewer draw calls
 function bake(T) {
   const keep = new Set(); T.hot.forEach(h => h.obj.traverse(o => keep.add(o)));
-  [T.tramHK, T.ferry, T.junk, T.jib].forEach(o => o && o.traverse(x => keep.add(x)));
+  [T.tramHK, T.ferry, T.junk, T.jib, ...(T.keep || [])].forEach(o => o && o.traverse(x => keep.add(x)));
   (T.beams || []).forEach(b => keep.add(b));
   T.root.updateMatrixWorld(true);
   const inv = new THREE.Matrix4().copy(T.body.matrixWorld).invert();
@@ -1055,12 +1211,12 @@ function tramAt(t, s, out, tan) {
 /* ───────────────────────── i18n + UI ───────────────────────── */
 let lang = 'zh'; try { lang = localStorage.getItem('walk-lang') === 'en' ? 'en' : 'zh'; } catch (e) {}
 const T_ = {
-  zh: { title: '梦之城', sub: '旅行手帐 · 走过的城市', list: '列表', dir: '城市目录', home: '全景', edit: '编辑城市', day: '昼', dusk: '黄昏', night: '夜', rain: '下雨', lang: 'EN', hint: '拖动旋转视角 · 滚轮缩放 · 点街区进入',
+  zh: { title: '梦之城', sub: '旅行手帐 · 走过的城市', list: '列表', spring: '春', summer: '夏', autumn: '秋', winter: '冬', music: '音乐', play: '播放', pause: '暂停', nowPlaying: '正在播放', upNext: '点播放开始', auto: '跟随季节和昼夜', autoSub: '春夏秋冬各一首，夜里换成《月光》（冬天一直是 Jingle Bells）', mfor: { spring: '春', summer: '夏', autumn: '秋', winter: '冬', night: '夜' }, credits: '录音来源：', dir: '城市目录', home: '全景', edit: '编辑城市', day: '昼', dusk: '黄昏', night: '夜', rain: '下雨', lang: 'EN', hint: '拖动旋转视角 · 滚轮缩放 · 点街区进入',
     editMsg: '<b>编辑模式</b>：按住街区拖到别的格子，两块会互换位置；选中后点「旋转」转 90°。相邻的城市之间会自动长出城门，电车轨道也会沿着新的城市边缘重新铺好。', rot: '旋转', reset: '重置', done: '完成',
     open: '打开手账 →', openPlot: '等我们去过再盖', tip: '亮点可以点：', conn: '在我的城里，它连着', connNone: '现在它是一座孤岛，进编辑模式把它拖到别的城市旁边吧。',
     st: { done: '手账已完成', wip: '手账制作中', todo: '手账待建' }, loading: '正在搭建城市…',
     toastOpen: n => `正式版这里会打开「${n}」的手账`, toastBell: '咚——钟楼的钟响了', toastPeony: '牡丹开了', toastTorii: '一阵樱花吹雪', toastJunk: '红帆船出港了', toastCrane: '塔吊转起来了', toastTram: '叮叮——电车加速', toastSwap: (a, b) => `「${a}」和「${b}」换了位置`, toastMove: a => `「${a}」搬到了新地方`, toastLink: (a, b) => `「${a}」和「${b}」之间长出了城门` },
-  en: { title: 'Dream City', sub: 'Travel Journals · Cities we walked', list: 'List', dir: 'Cities', home: 'Overview', edit: 'Edit city', day: 'Day', dusk: 'Dusk', night: 'Night', rain: 'Rain', lang: '中文', hint: 'Drag to orbit · scroll to zoom · tap a district',
+  en: { title: 'Dream City', sub: 'Travel Journals · Cities we walked', list: 'List', spring: 'Spr', summer: 'Sum', autumn: 'Aut', winter: 'Win', music: 'Music', play: 'Play', pause: 'Pause', nowPlaying: 'Now playing', upNext: 'Press play', auto: 'Follow season & time', autoSub: 'One piece per season; Clair de lune at night (winter stays Jingle Bells)', mfor: { spring: 'Spring', summer: 'Summer', autumn: 'Autumn', winter: 'Winter', night: 'Night' }, credits: 'Recordings: ', dir: 'Cities', home: 'Overview', edit: 'Edit city', day: 'Day', dusk: 'Dusk', night: 'Night', rain: 'Rain', lang: '中文', hint: 'Drag to orbit · scroll to zoom · tap a district',
     editMsg: '<b>Edit mode</b>: drag a district onto another square to swap them; select one and press Rotate to turn it 90°. Neighbouring cities grow a gate between them, and the tram line re-lays itself around the new outline.', rot: 'Rotate', reset: 'Reset', done: 'Done',
     open: 'Open journal →', openPlot: 'Built after we visit', tip: 'Tap the glowing spot: ', conn: 'In my city it connects to', connNone: 'It is an island for now. Use Edit city to drag it next to another district.',
     st: { done: 'Journal done', wip: 'Journal in progress', todo: 'Journal to come' }, loading: 'Building the city…',
@@ -1090,13 +1246,13 @@ function buildDir() {
   for (const id of ORDER) {
     const li = document.createElement('li');
     li.innerHTML = `<button data-id="${id}"><span class="dot" style="--c:${CITY[id].color}">${CITY[id].seal}</span><span class="nm">${nm(id)}</span><span class="st">${L().st[CITY[id].status]}</span></button>`;
-    li.firstChild.addEventListener('click', () => onTileClick(id)); ul.appendChild(li);
+    li.firstChild.addEventListener('click', () => { onTileClick(id); if (innerWidth <= 760) { $('dir').classList.add('collapsed'); $('dirToggle').setAttribute('aria-expanded', false); } }); ul.appendChild(li);
   }
 }
 function applyLang() {
   const t = L(); document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   $('tTitle').textContent = t.title; $('tSub').textContent = t.sub; $('tDir').textContent = t.dir; $('tHome').textContent = t.home; $('tEdit').textContent = t.edit;
-  document.querySelectorAll('[data-t]').forEach(e => e.textContent = t[e.dataset.t]); $('tRain').textContent = t.rain; $('tLang').textContent = t.lang; $('tList').textContent = t.list; $('hint').textContent = t.hint;
+  document.querySelectorAll('[data-t]').forEach(e => e.textContent = t[e.dataset.t]); $('tLang').textContent = t.lang; $('tList').textContent = t.list; $('tMusic').textContent = t.music; if (typeof renderMusic === 'function' && $('mNow')) try { renderMusic(); } catch (e) {} $('hint').textContent = t.hint;
   $('tEditMsg').innerHTML = t.editMsg; $('tRot').textContent = t.rot; $('tReset').textContent = t.reset; $('tDone').textContent = t.done;
   buildLabels(); buildDir(); if (focused) fillCard(focused);
 }
@@ -1110,8 +1266,7 @@ function fillCard(id) {
   updateCardConn();
 }
 function updateCardConn() {
-  if (!focused) return; const n = neighbours(focused), t = L();
-  $('cConn').innerHTML = n.length ? `${t.conn} <b>${n.map(nm).join(lang === 'zh' ? '、' : ', ')}</b>` : t.connNone;
+  return;
 }
 
 /* ───────────────────────── interaction ───────────────────────── */
@@ -1209,6 +1364,8 @@ function showCard(on) { $('card').hidden = !on; document.body.classList.toggle('
 $('cClose').onclick = () => goHome(1.2);
 $('cOpen').onclick = () => { const u = CITY[focused] && CITY[focused].url; if (u) location.href = u; };
 $('bHome').onclick = () => goHome(1.3);
+$('dirToggle').onclick = () => { const c = $('dir').classList.toggle('collapsed'); $('dirToggle').setAttribute('aria-expanded', !c); try { localStorage.setItem('dreamcity-dir', c ? '0' : '1'); } catch (e) {} };
+try { if (localStorage.getItem('dreamcity-dir') === '1' && innerWidth > 760) { $('dir').classList.remove('collapsed'); $('dirToggle').setAttribute('aria-expanded', true); } } catch (e) {}
 $('bLang').onclick = () => { lang = lang === 'zh' ? 'en' : 'zh'; try { localStorage.setItem('walk-lang', lang); } catch (e) {} applyLang(); };
 function setMode(m) {
   mode = m; const on = m === 'edit';
@@ -1242,6 +1399,39 @@ const TOD = {
 };
 let todKey = 'day'; const cur = {}; (function init() { const d = TOD.day; for (const k in d) cur[k] = Array.isArray(d[k]) ? [...d[k]] : d[k]; })();
 let rainOn = false, rainK = 0;
+const SEASONS = ['spring', 'summer', 'autumn', 'winter'];
+let season = (() => { const m = new Date().getMonth() + 1; return m >= 3 && m <= 5 ? 'spring' : m <= 8 && m >= 6 ? 'summer' : m >= 9 && m <= 11 ? 'autumn' : 'winter'; })();
+const AUTUMN = ['#d9822b', '#c4432b', '#e8b33a', '#b8602a', '#d4a02f'];
+const LEAVES = ['#d9822b', '#c4432b', '#e8b33a', '#a8521f'];
+const SEA_TINT = { spring: ['#f6e3ea', .22], summer: ['#e2eef0', .18], autumn: ['#f0dcc6', .28], winter: ['#e3eaf1', .35] };
+const seaK = { winter: 0, summer: 0, autumn: 0 }; const seaTint = new THREE.Color('#ffffff'); let seaTintAmt = 0;
+const WHITE = new THREE.Color('#f2f5f8');
+function hashHex(c) { return parseInt(c.getHexString(), 16); }
+function setSeason(sz) {
+  season = sz;
+  document.querySelectorAll('.sea').forEach(b => b.setAttribute('aria-pressed', b.dataset.sea === sz));
+  for (const m of SEAS) {
+    const b = m.userData.base, t = m.userData.target.copy(b), k = m.userData.sk;
+    if (k === 'leaf') {
+      if (sz === 'spring') t.lerp(new THREE.Color('#a9d06c'), .4);
+      else if (sz === 'summer') t.lerp(new THREE.Color('#4c7a2c'), .35);
+      else if (sz === 'autumn') t.set(AUTUMN[hashHex(b) % AUTUMN.length]);
+      else t.lerp(WHITE, .78);
+    } else if (k === 'sakura') {
+      if (sz === 'summer') t.set('#6f9a45'); else if (sz === 'autumn') t.set(AUTUMN[hashHex(b) % AUTUMN.length]); else if (sz === 'winter') t.lerp(WHITE, .85);
+    } else if (k === 'ground') {
+      if (sz === 'spring') t.lerp(new THREE.Color('#a8ca72'), .3); else if (sz === 'autumn') t.lerp(new THREE.Color('#bba15a'), .5); else if (sz === 'winter') t.lerp(WHITE, .86);
+    } else if (k === 'roof') { if (sz === 'winter') t.lerp(WHITE, .55); }
+    else if (k === 'pave') { if (sz === 'winter') t.lerp(WHITE, .45); }
+  }
+  const Tk = byId.tokyo, Ly = byId.luoyang;
+  Tk.petals.on = sz === 'spring' || sz === 'autumn'; Tk.petals.recolor(sz === 'autumn' ? LEAVES : Tk.petalPal);
+  Ly.petals.on = sz !== 'winter'; Ly.petals.recolor(sz === 'autumn' ? LEAVES : Ly.petalPal);
+  Ly.peony.children.forEach(o => { if (o.userData.flower) o.visible = sz === 'spring' || sz === 'summer'; });
+  seaTint.set(SEA_TINT[sz][0]);
+  musicAuto();
+}
+document.querySelectorAll('.sea').forEach(b => b.onclick = () => setSeason(b.dataset.sea));
 const C1 = new THREE.Color(), C2 = new THREE.Color(), BG1 = new THREE.Color(), BG2 = new THREE.Color();
 function mixC(a, b, t) { return '#' + C1.set(a).lerp(C2.set(b), t).getHexString(); }
 function stepTod(dt) {
@@ -1249,7 +1439,11 @@ function stepTod(dt) {
   for (const key in tgt) { const v = tgt[key]; if (typeof v === 'number') cur[key] = lerp(cur[key], v, k); else if (Array.isArray(v)) cur[key] = cur[key].map((x, i) => lerp(x, v[i], k)); else cur[key] = mixC(cur[key], v, k); }
   rainK = lerp(rainK, rainOn ? 1 : 0, k);
   const dim = 1 - rainK * .3;
-  const bgA = mixC(cur.top, '#6f7685', rainK * .35), bgB = mixC(cur.bot, '#59606e', rainK * .35);
+  for (const sk in seaK) seaK[sk] = lerp(seaK[sk], season === sk ? 1 : 0, k);
+  seaTintAmt = lerp(seaTintAmt, SEA_TINT[season][1] * (1 - cur.glow * .8), k);
+  for (const m of SEAS) m.color.lerp(m.userData.target, k);
+  const topS = mixC(cur.top, '#' + seaTint.getHexString(), seaTintAmt), botS = mixC(cur.bot, '#' + seaTint.getHexString(), seaTintAmt * .8);
+  const bgA = mixC(topS, '#6f7685', rainK * .35), bgB = mixC(botS, '#59606e', rainK * .35);
   document.documentElement.style.setProperty('--bg-top', bgA);
   document.documentElement.style.setProperty('--bg-bot', bgB);
   BG1.set(bgA); BG2.set(bgB);
@@ -1257,9 +1451,10 @@ function stepTod(dt) {
   sun.color.set(cur.sun); sun.intensity = cur.si * dim; sun.position.set(...cur.sp).multiplyScalar(1.8);
   hemi.color.set(cur.hs); hemi.groundColor.set(cur.hg); hemi.intensity = cur.hi * (1 - rainK * .15);
   for (const m of MATS) m.envMapIntensity = (m.userData.env ?? 1) * cur.env * (1 + rainK * .6);
-  WATER.color.set(cur.water);
+  WATER.color.set(mixC(cur.water, '#a9bfcb', seaK.winter * .35 * (1 - cur.glow)));
   for (const m of WET) m.roughness = lerp(.75, .18, rainK);
   stars.material.opacity = cur.star * (1 - rainK);
+  snowMat.opacity = seaK.winter * .9; ffMat.opacity = seaK.summer * clamp(cur.glow * 1.2 - .1, 0, 1);
   renderer.toneMappingExposure = cur.exp;
   if (bloom) { bloom.strength = cur.bloom; bloom.threshold = lerp(.92, .62, cur.glow); }
   rainMat.opacity = rainK * (todKey === 'night' ? .45 : .32);
@@ -1267,14 +1462,70 @@ function stepTod(dt) {
 const bgCanvas = cnv(2, 256, () => {}); const bgCtx = bgCanvas.getContext('2d');
 function bgGrad() { const g = bgCtx.createLinearGradient(0, 0, 0, 256); g.addColorStop(0, '#' + BG1.getHexString()); g.addColorStop(1, '#' + BG2.getHexString()); return g; }
 const bgTex = new THREE.CanvasTexture(bgCanvas); bgTex.colorSpace = THREE.SRGBColorSpace; scene.background = bgTex;
-document.querySelectorAll('.tod').forEach(b => b.onclick = () => { todKey = b.dataset.tod; document.body.dataset.tod = todKey === 'night' ? 'night' : todKey === 'dusk' ? 'dusk' : ''; document.querySelectorAll('.tod').forEach(x => x.setAttribute('aria-pressed', x === b)); });
-$('bRain').onclick = () => { rainOn = !rainOn; $('bRain').setAttribute('aria-pressed', rainOn); };
+document.querySelectorAll('.tod').forEach(b => b.onclick = () => { todKey = b.dataset.tod; document.body.dataset.tod = todKey === 'night' ? 'night' : todKey === 'dusk' ? 'dusk' : ''; document.querySelectorAll('.tod').forEach(x => x.setAttribute('aria-pressed', x === b)); if (typeof musicAuto === 'function') musicAuto(); });
+
+/* music */
+const MUSIC = {
+  spring: { file: 'overview/music/spring-april.mp3', t: { zh: '柴可夫斯基《四季》四月 · 松雪草', en: 'Tchaikovsky, The Seasons — April: Snowdrop' }, c: 'Bernd Krueger (piano-midi.de), CC BY-SA 2.0 DE', u: 'https://commons.wikimedia.org/wiki/File:Tchaikovsky_the_Seasons_April.ogg' },
+  summer: { file: 'overview/music/summer-entertainer.mp3', t: { zh: '乔普林《艺人》', en: 'Scott Joplin, The Entertainer' }, c: 'Gnissah (Wikimedia Commons), public domain', u: 'https://commons.wikimedia.org/wiki/File:Scott_Joplin_-_The_Entertainer_(1902).ogg' },
+  autumn: { file: 'overview/music/autumn-october.mp3', t: { zh: '柴可夫斯基《四季》十月 · 秋之歌', en: 'Tchaikovsky, The Seasons — October: Autumn Song' }, c: 'Bernd Krueger (piano-midi.de), CC BY-SA 2.0 DE', u: 'https://commons.wikimedia.org/wiki/File:Tchaikovsky_the_Seasons_October.ogg' },
+  winter: { file: 'overview/music/winter-jingle-bells.mp3', t: { zh: '《Jingle Bells》（静谧版）', en: 'Jingle Bells (Calm)' }, c: 'Kevin MacLeod (incompetech.com), CC BY 3.0', u: 'https://commons.wikimedia.org/wiki/File:Jingle_Bells_(Calm)_(Kevin_MacLeod)_(ISRC_USUAN1100188).oga' },
+  night:  { file: 'overview/music/night-clair-de-lune.mp3', t: { zh: '德彪西《月光》', en: 'Debussy, Clair de lune' }, c: 'Laurens Goedhart, public domain', u: 'https://commons.wikimedia.org/wiki/File:Clair_de_lune_(Claude_Debussy)_Suite_bergamasque.ogg' },
+};
+const MKEYS = ['spring', 'summer', 'autumn', 'winter', 'night'];
+let musicOn = false, musicPick = 'auto', musicCur = null, actx = null; const chans = {};
+function autoTrack() { return todKey === 'night' && season !== 'winter' ? 'night' : season; }
+function wantTrack() { return musicPick === 'auto' ? autoTrack() : musicPick; }
+function chan(key) {
+  if (chans[key]) return chans[key];
+  const a = new Audio(); a.src = MUSIC[key].file; a.loop = true; a.preload = 'auto';
+  const ch = { a, g: null };
+  if (actx) { try { const src = actx.createMediaElementSource(a); ch.g = actx.createGain(); ch.g.gain.value = 0; src.connect(ch.g).connect(actx.destination); } catch (e) { ch.g = null; } }
+  chans[key] = ch; return ch;
+}
+function fadeTo(ch, v, sec) {
+  if (ch.g) { const t = actx.currentTime; ch.g.gain.cancelScheduledValues(t); ch.g.gain.setValueAtTime(ch.g.gain.value, t); ch.g.gain.linearRampToValueAtTime(v, t + sec); }
+  else ch.a.volume = v;
+  clearTimeout(ch.stop); if (v === 0) ch.stop = setTimeout(() => ch.a.pause(), sec * 1000 + 60);
+}
+function musicApply() {
+  const want = musicOn ? wantTrack() : null;
+  if (want !== musicCur && musicCur) fadeTo(chan(musicCur), 0, 1.4);
+  if (want) { const ch = chan(want); if (ch.a.paused) { const p = ch.a.play(); if (p && p.catch) p.catch(() => {}); } fadeTo(ch, .75, 1.6); }
+  musicCur = want; renderMusic();
+}
+function musicAuto() { if (musicOn && musicPick === 'auto') musicApply(); else renderMusic(); }
+function startAudio() {
+  if (!actx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { try { actx = new AC(); } catch (e) { actx = null; } } }
+  if (actx && actx.state === 'suspended') actx.resume();
+}
+function renderMusic() {
+  const t = L();
+  $('bMusic').setAttribute('aria-pressed', musicOn);
+  $('mIcon').setAttribute('d', musicOn ? 'M7 5h4v14H7zM13 5h4v14h-4z' : 'M8 5v14l11-7z'); $('mPlay').setAttribute('aria-label', musicOn ? t.pause : t.play);
+  const cur = wantTrack(); $('mNowLbl').textContent = musicOn ? t.nowPlaying : t.upNext; $('mNow').textContent = MUSIC[cur].t[lang];
+  const opts = [['auto', t.auto, t.autoSub]].concat(MKEYS.map(k => [k, MUSIC[k].t[lang], t.mfor[k]]));
+  $('mList').innerHTML = opts.map(([k, a, b]) => `<button role="radio" aria-checked="${musicPick === k}" data-k="${k}"><i></i><span>${a}<small>${b}</small></span></button>`).join('');
+  $('mList').querySelectorAll('button').forEach(b => b.onclick = () => { musicPick = b.dataset.k; if (!musicOn) { startAudio(); musicOn = true; } musicApply(); });
+  $('mCred').innerHTML = t.credits + MKEYS.map(k => `<a href="${MUSIC[k].u}" target="_blank" rel="noopener">${MUSIC[k].t[lang]}</a> — ${MUSIC[k].c}`).join('；');
+}
+$('mPlay').onclick = () => { startAudio(); musicOn = !musicOn; musicApply(); };
+$('bMusic').onclick = () => { const open = $('mpanel').hidden; $('mpanel').hidden = !open; $('bMusic').setAttribute('aria-expanded', open); if (open) renderMusic(); };
+document.addEventListener('visibilitychange', () => { if (!musicOn || !musicCur) return; const a = chan(musicCur).a; if (document.hidden) a.pause(); else { const p = a.play(); if (p && p.catch) p.catch(() => {}); } });
+canvas.addEventListener('pointerdown', () => { if (!$('mpanel').hidden) { $('mpanel').hidden = true; $('bMusic').setAttribute('aria-expanded', false); } });
 
 /* post */
 let composer = null, bloom = null;
 if (!LITE) {
   composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
+  try {
+    const ao = new GTAOPass(scene, camera, innerWidth, innerHeight);
+    ao.output = GTAOPass.OUTPUT.Default; ao.blendIntensity = .85;
+    ao.updateGtaoMaterial({ radius: .55, distanceExponent: 1.4, thickness: 1.2, scale: 1, samples: 12, distanceFallOff: 1, screenSpaceRadius: false });
+    ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, radiusExponent: 1, rings: 2, samples: 12 });
+    composer.addPass(ao);
+  } catch (e) { console.warn('AO off', e); }
   bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .2, .55, .82); composer.addPass(bloom);
   composer.addPass(new OutputPass());
 }
@@ -1287,6 +1538,7 @@ addEventListener('resize', resize);
 /* ───────────────────────── start ───────────────────────── */
 applyLayout(true);
 applyLang();
+setSeason(season);
 TILES.forEach((T, i) => { T.drop = REDUCED ? 0 : 1; T.dropDelay = .35 + i * .28; });
 camera.position.copy(HOME_DIR.clone().multiplyScalar(viewDist() * 1.35)); controls.target.set(0, 0, 1);
 goHome(2.6);
@@ -1338,6 +1590,7 @@ function frame() {
   for (const l of POINTS) l.intensity = l.userData.k * glow;
   // particles
   for (const p of PARTICLES) p.update(dt, time);
+  for (const f of ANIMS) f(dt, time);
   // trams
   for (const t of trams) {
     t.boost = Math.max(0, t.boost - dt); t.s += dt * t.speed * (1 + t.boost * .8);
@@ -1348,6 +1601,10 @@ function frame() {
   // rain
   if (rainK > .01) { for (let i = 0; i < RAIN_N; i++) { const r = rainSt[i]; r.y -= r.v * dt; if (r.y < 0) { r.y = 26 + R() * 6; r.x = (R() - .5) * 60; r.z = (R() - .5) * 46; } rainPos.set([r.x, r.y, r.z, r.x + .05, r.y + .55, r.z], i * 6); } rainGeo.attributes.position.needsUpdate = true; }
   rain.visible = rainK > .01;
+  snow.visible = snowMat.opacity > .01;
+  if (snow.visible) { for (let i = 0; i < SNOW_N; i++) { const st = snowSt[i]; let y = snowPos[i * 3 + 1] - st.v * dt; snowPos[i * 3] += Math.sin(time * .7 + st.ph) * dt * .35; if (y < 0) { y = 24 + R() * 4; snowPos[i * 3] = (R() - .5) * 58; snowPos[i * 3 + 2] = (R() - .5) * 44; } snowPos[i * 3 + 1] = y; } snowGeo.attributes.position.needsUpdate = true; }
+  fireflies.visible = ffMat.opacity > .01;
+  if (fireflies.visible) { for (let i = 0; i < FF_N; i++) { const f = ffSt[i]; ffPos.set([f.x + Math.sin(time * f.sp + f.ph) * .8, f.y + Math.sin(time * f.sp * 1.7 + f.ph) * .3, f.z + Math.cos(time * f.sp * .8 + f.ph) * .8], i * 3); } ffGeo.attributes.position.needsUpdate = true; }
   // labels
   const w = innerWidth, h = innerHeight;
   for (const id of ORDER) {
