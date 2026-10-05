@@ -43,6 +43,24 @@
    },
    "cover": "xian-2026/img/p169.webp",
    "days": 4
+  },
+  {
+   "slug": "luoyang-2026",
+   "badge": "洛",
+   "title": {
+    "zh": "古都走廊 · 洛阳",
+    "en": "Ancient Capitals · Luoyang"
+   },
+   "sub": {
+    "zh": "LUOYANG · 夏 · 3 天",
+    "en": "LUOYANG · SUMMER · 3 DAYS"
+   },
+   "line": {
+    "zh": "白马寺 · 国际佛殿 · 十字街 · 古墓博物馆 · 龙门石窟 · 关林",
+    "en": "White Horse Temple · International Halls · Shizi Street · Ancient Tombs Museum · Longmen Grottoes · Guanlin"
+   },
+   "cover": "luoyang-2026/img/p758.webp",
+   "days": 3
   }
  ]
 }
