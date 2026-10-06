@@ -79,6 +79,24 @@
    },
    "cover": "kaifeng-2026/img/p055.webp",
    "days": 2
+  },
+  {
+   "slug": "datong-2026",
+   "badge": "平",
+   "title": {
+    "zh": "古都走廊 · 大同",
+    "en": "Ancient Capitals · Datong"
+   },
+   "sub": {
+    "zh": "DATONG · 夏 · 2 天",
+    "en": "DATONG · SUMMER · 2 DAYS"
+   },
+   "line": {
+    "zh": "云冈石窟 · 纯阳宫 · 华严寺 · 悬空寺 · 恒山 · 何以悬空寺",
+    "en": "Yungang Grottoes · Chunyang Temple · Huayan Temple · Hanging Temple · Mount Heng · Why the Temple Hangs"
+   },
+   "cover": "datong-2026/img/p394.webp",
+   "days": 2
   }
  ]
 }
