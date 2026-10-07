@@ -97,6 +97,24 @@
    },
    "cover": "datong-2026/img/p394.webp",
    "days": 2
+  },
+  {
+   "slug": "hk-2025",
+   "badge": "港",
+   "title": {
+    "zh": "香港 · 圣诞四日",
+    "en": "Hong Kong · Four Days at Christmas"
+   },
+   "sub": {
+    "zh": "HONG KONG · 冬 · 4 天",
+    "en": "HONG KONG · WINTER · 4 DAYS"
+   },
+   "line": {
+    "zh": "尖沙咀 · M+ · 出前一丁 · 星光大道 · 九龙城寨 · 浸会大学 · 天星小轮 · 怪兽大厦",
+    "en": "Tsim Sha Tsui · M+ · Demae Itcho · Avenue of Stars · Walled City · Baptist University · Star Ferry · Monster Building"
+   },
+   "cover": "hk-2025/img/p672.webp",
+   "days": 4
   }
  ]
 }
