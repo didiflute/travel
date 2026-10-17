@@ -2,11 +2,11 @@
 // "Follow season & time" picks a track from the toolbar season + time; tracks cross-fade through Web Audio gain nodes
 // (iOS ignores element.volume). Nothing plays until the viewer presses play. Credits are required by the CC licences.
 const TRACKS={
- spring:{file:'./music/spring-april.mp3',t:{zh:'柴可夫斯基《四季》四月 · 松雪草',en:'Tchaikovsky, The Seasons — April: Snowdrop'},c:'Bernd Krueger (piano-midi.de), CC BY-SA 2.0 DE',u:'https://commons.wikimedia.org/wiki/File:Tchaikovsky_the_Seasons_April.ogg'},
- summer:{file:'./music/summer-entertainer.mp3',t:{zh:'乔普林《艺人》',en:'Scott Joplin, The Entertainer'},c:'Gnissah (Wikimedia Commons), public domain',u:'https://commons.wikimedia.org/wiki/File:Scott_Joplin_-_The_Entertainer_(1902).ogg'},
- autumn:{file:'./music/autumn-october.mp3',t:{zh:'柴可夫斯基《四季》十月 · 秋之歌',en:'Tchaikovsky, The Seasons — October: Autumn Song'},c:'Bernd Krueger (piano-midi.de), CC BY-SA 2.0 DE',u:'https://commons.wikimedia.org/wiki/File:Tchaikovsky_the_Seasons_October.ogg'},
- winter:{file:'./music/winter-jingle-bells.mp3',t:{zh:'《Jingle Bells》（静谧版）',en:'Jingle Bells (Calm)'},c:'Kevin MacLeod (incompetech.com), CC BY 3.0',u:'https://commons.wikimedia.org/wiki/File:Jingle_Bells_(Calm)_(Kevin_MacLeod)_(ISRC_USUAN1100188).oga'},
- night:{file:'./music/night-clair-de-lune.mp3',t:{zh:'德彪西《月光》',en:'Debussy, Clair de lune'},c:'Laurens Goedhart, public domain',u:'https://commons.wikimedia.org/wiki/File:Clair_de_lune_(Claude_Debussy)_Suite_bergamasque.ogg'}
+ spring:{file:new URL('./music/spring-april.mp3',import.meta.url).href,t:{zh:'柴可夫斯基《四季》四月 · 松雪草',en:'Tchaikovsky, The Seasons — April: Snowdrop'},c:'Bernd Krueger (piano-midi.de), CC BY-SA 2.0 DE',u:'https://commons.wikimedia.org/wiki/File:Tchaikovsky_the_Seasons_April.ogg'},
+ summer:{file:new URL('./music/summer-entertainer.mp3',import.meta.url).href,t:{zh:'乔普林《艺人》',en:'Scott Joplin, The Entertainer'},c:'Gnissah (Wikimedia Commons), public domain',u:'https://commons.wikimedia.org/wiki/File:Scott_Joplin_-_The_Entertainer_(1902).ogg'},
+ autumn:{file:new URL('./music/autumn-october.mp3',import.meta.url).href,t:{zh:'柴可夫斯基《四季》十月 · 秋之歌',en:'Tchaikovsky, The Seasons — October: Autumn Song'},c:'Bernd Krueger (piano-midi.de), CC BY-SA 2.0 DE',u:'https://commons.wikimedia.org/wiki/File:Tchaikovsky_the_Seasons_October.ogg'},
+ winter:{file:new URL('./music/winter-jingle-bells.mp3',import.meta.url).href,t:{zh:'《Jingle Bells》（静谧版）',en:'Jingle Bells (Calm)'},c:'Kevin MacLeod (incompetech.com), CC BY 3.0',u:'https://commons.wikimedia.org/wiki/File:Jingle_Bells_(Calm)_(Kevin_MacLeod)_(ISRC_USUAN1100188).oga'},
+ night:{file:new URL('./music/night-clair-de-lune.mp3',import.meta.url).href,t:{zh:'德彪西《月光》',en:'Debussy, Clair de lune'},c:'Laurens Goedhart, public domain',u:'https://commons.wikimedia.org/wiki/File:Clair_de_lune_(Claude_Debussy)_Suite_bergamasque.ogg'}
 };
 const KEYS=['spring','summer','autumn','winter','night'];
 const WORDS={

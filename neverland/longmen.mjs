@@ -8,7 +8,7 @@ export function buildLongmen(){
  const root=new T.Group();root.name='Fengxian sculptural cliff';
  const mat=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.96,...extra});
  const rock=mat('#545954'),carving=mat('#a29379'),shadowStone=mat('#777260'),edge=mat('#918b79'),dark=mat('#383c36');
- const rockMap=new T.TextureLoader().load('./assets/longmen/rock.webp');rockMap.colorSpace=T.SRGBColorSpace;rockMap.wrapS=rockMap.wrapT=T.RepeatWrapping;rockMap.repeat.set(1.6,1.6);rock.map=rockMap;rock.bumpMap=rockMap;rock.bumpScale=.12;rock.color.set('#a2a49b');
+ const rockMap=new T.TextureLoader().load(new URL('./assets/longmen/rock.webp',import.meta.url).href);rockMap.colorSpace=T.SRGBColorSpace;rockMap.wrapS=rockMap.wrapT=T.RepeatWrapping;rockMap.repeat.set(1.6,1.6);rock.map=rockMap;rock.bumpMap=rockMap;rock.bumpScale=.12;rock.color.set('#a2a49b');
  const light=mat('#f7d294',{emissive:'#ffc06b',emissiveIntensity:3.4}),lamps=[];
  const mesh=(g,m,x=0,y=0,z=0,p=root)=>{const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;p.add(o);return o;};
  const box=(w,h,d,m,x,y,z,p=root)=>mesh(new T.BoxGeometry(w,h,d),m,x,y,z,p);
@@ -44,7 +44,7 @@ export function buildLongmen(){
  const glows=lampGlows(lamps);root.add(glows);
  const stats=bake(root),sculpture=new T.Group();sculpture.name='Vairocana volumetric sculpture';sculpture.position.set(0,2.65,-2.6);sculpture.userData.dynamic=true;root.add(sculpture);
  const loader=new T.TextureLoader();
- const ready=Promise.all([fetch('./assets/longmen/sculpture.json').then(r=>r.json()),fetch('./assets/longmen/attendants.json').then(r=>r.json()),loader.loadAsync('./assets/longmen/sculpture.webp'),loader.loadAsync('./assets/longmen/attendants.webp')]).then(([mainData,attendantData,mainTex,attendantTex])=>{
+ const ready=Promise.all([fetch(new URL('./assets/longmen/sculpture.json',import.meta.url).href).then(r=>r.json()),fetch(new URL('./assets/longmen/attendants.json',import.meta.url).href).then(r=>r.json()),loader.loadAsync(new URL('./assets/longmen/sculpture.webp',import.meta.url).href),loader.loadAsync(new URL('./assets/longmen/attendants.webp',import.meta.url).href)]).then(([mainData,attendantData,mainTex,attendantTex])=>{
   for(const texture of [mainTex,attendantTex]){texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=4;}
   const main=stoneSculpture(mainData,mainTex,carving);sculpture.add(main);stats.triangles+=main.userData.triangles;
   const monk=stoneSculpture(attendantData[0],attendantTex,shadowStone),bodhisattva=stoneSculpture(attendantData[1],attendantTex,shadowStone);
