@@ -1,0 +1,1 @@
+Journal Pen is a web-only character subset of Yozai Regular v0.868, renamed for this travel journal. Original: https://github.com/lxgw/yozai-font . No glyph shapes were modified. Distributed under SIL OFL 1.1; see OFL-Yozai.txt.
