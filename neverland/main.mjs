@@ -15,6 +15,7 @@ import {createRailway} from './railway.mjs';
 import {createAtmosphere} from './world-atmosphere.mjs';
 import {createWorldToolbar} from './world-toolbar.mjs';
 import {createSecondStar} from './second-star.mjs';
+const startup={moduleStart:performance.now(),readyAt:0,firstFrame:0};
 const $=s=>document.querySelector(s),STORE='neverland-playground-layout-v1';
 try {
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -29,7 +30,7 @@ try {
  const hemi=new THREE.HemisphereLight('#b4cbea','#685447',1.15);scene.add(hemi);
  const sun=new THREE.DirectionalLight('#ffdbb4',2.1);sun.position.set(-18,30,22);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-.0008;sun.shadow.normalBias=.025;sun.shadow.radius=3;scene.add(sun,sun.target);
  const rim=new THREE.DirectionalLight('#849edb',1.5);rim.position.set(10,18,-20);scene.add(rim);
- const cityGroups={},cityData={};let ui=null;let cameraTween=null,mapOrientation=null,detailShot='all',walkPlaying=false,walkElapsed=0;let editing=false,focused=false,selected=location.hash==='#xian'?'xian':'kaifeng',playing=false,elapsed=0,audio=null,drag=null,press=null,raf=0,previous=0,accumulator=0,frames=0,quality=1.25,slow=0,samples=0,adapted=false;
+ const cityGroups={},cityData={};let startupReady=false,startupDisposed=false;let ui=null;let cameraTween=null,mapOrientation=null,detailShot='all',walkPlaying=false,walkElapsed=0;let editing=false,focused=false,selected=location.hash==='#xian'?'xian':'kaifeng',playing=false,elapsed=0,audio=null,drag=null,press=null,raf=0,previous=0,accumulator=0,frames=0,quality=1.25,slow=0,samples=0,adapted=false;
  const metadata={kaifeng:{name:'开封',subtitle:'虹桥 · 打铁花',button:'一起看打铁花',duration:7,status:'等一场满天金花',title:'汴河<em>· 一梦</em>',verse:'虹桥灯火，和你一起看满天金花',eyebrow:'KAIFENG · OUR NIGHT BY THE RIVER'},xian:{name:'西安',subtitle:'大雁塔 · 兵马俑',button:'敲响长安钟',duration:5,status:'轻轻一敲，听长安的回响',title:'长安<em>· 旧梦</em>',verse:'塔影与军阵，记得我们走过的长安',eyebrow:'XI’AN · THE DAYS WE WALKED'},luoyang:{name:'洛阳',subtitle:'龙门石窟 · 国际佛殿群',button:'乘车看夜色',duration:8,status:'小车沿岸慢行，灯火映在伊河上',title:'洛阳<em>· 晚风</em>',verse:'那晚坐在车上，隔着河看灯光里的龙门',eyebrow:'LUOYANG · A GARDEN OF OUR MEMORIES'},datong:{name:'大同',subtitle:'云冈石窟 · 悬空寺',button:'走过悬空栈道',duration:7,status:'崖壁上的回廊，脚下是山谷',title:'大同<em>· 云崖</em>',verse:'石刻的宁静，悬在山间的楼阁',eyebrow:'DATONG · BETWEEN STONE AND SKY'},tokyo:{name:'东京',subtitle:'浅草寺 · 昭和街巷 · 东京站',button:'一起看花火大会',duration:9,status:'店灯渐暖，等一场夏夜花火',title:'东京<em>· 花火</em>',verse:'穿过灯笼下的街巷，一起等夜空开花',eyebrow:'TOKYO · LIGHTS OF A SUMMER EVENING'}};
  metadata.hongkong={name:'香港',subtitle:'九龙城寨 · 维港 · 天星小轮',button:'乘小轮，看海风',duration:8,status:'密密的城，宽宽的海，等一艘绿白小轮',title:'香港<em>· 海风</em>',verse:'把密密的街巷留在身后，一起吹一会儿海风',eyebrow:'HONG KONG · ACROSS THE HARBOUR'};
  const labels={};for(const id of Object.keys(DEFAULT_LAYOUT)){
@@ -61,6 +62,14 @@ try {
  function applyLayout(){for(const [id,p] of Object.entries(layout)){cityGroups[id].position.set(p[0]*CELL,0,p[1]*CELL);cityGroups[id].rotation.y=p[2]*Math.PI/2}scene.updateMatrixWorld(true);selection.position.copy(cityGroups[selected].position);railway.rebuild(layout);shadow()}
  function buildGrid(){disposeScene(grid);const b=bounds(1),positions=[];for(let c=b.minX;c<=b.maxX+1;c++){positions.push((c-.5)*CELL,-.46,(b.minZ-.5)*CELL,(c-.5)*CELL,-.46,(b.maxZ+.5)*CELL)}for(let r=b.minZ;r<=b.maxZ+1;r++){positions.push((b.minX-.5)*CELL,-.46,(r-.5)*CELL,(b.maxX+.5)*CELL,-.46,(r-.5)*CELL)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));grid.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:'#97b9c1',transparent:true,opacity:.3})));grid.visible=editing}
  const view=createViewControls(canvas,{enabled:()=>!editing&&!(playing&&selected==='luoyang'),onChange(){frame();fx.invalidateReflection();schedule()},onDrag(active){document.body.classList.toggle('rotating',active)}});
+ function positionMobileView(){
+  if(focused&&innerWidth<=750){
+   const introBottom=$('.intro').getBoundingClientRect().bottom,panelTop=$('.performance-control').getBoundingClientRect().top,tabs=$('#xianViews'),tabsTop=tabs.hidden?Infinity:tabs.getBoundingClientRect().top;
+   const bottom=Math.min(panelTop||innerHeight*.65,tabsTop)-12,top=introBottom+20;
+   const center=(top+Math.max(top+80,bottom))/2,offset=Math.max(0,innerHeight/2-center);
+   camera.setViewOffset(innerWidth,innerHeight,0,offset,innerWidth,innerHeight);
+  }else if(camera.view?.enabled)camera.clearViewOffset();
+ }
  function frame(animate=false){
   document.body.classList.toggle('river-view',focused&&selected==='luoyang'&&detailShot==='river');
   document.body.classList.toggle('temple-view',focused&&((selected==='datong'&&detailShot==='temple')||(selected==='tokyo'&&detailShot==='hanabi')||(selected==='hongkong'&&detailShot==='harbour')));
@@ -79,7 +88,7 @@ try {
   else{let x=0,y=0;for(const xx of [(b.minX-.5)*CELL,(b.maxX+.5)*CELL])for(const zz of [(b.minZ-.5)*CELL,(b.maxZ+.5)*CELL])for(const yy of [-1,9]){const p=new THREE.Vector3(xx,yy,zz).applyMatrix4(camera.matrixWorldInverse);x=Math.max(x,Math.abs(p.x));y=Math.max(y,Math.abs(p.y))}span=Math.max(y*2.7,x*2.35/aspect);if(innerWidth<750)span*=.98}
   span/=view.orientation.zoom;camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix();
   if(animate&&!reduced){cameraTween={from,to:{position:camera.position.clone(),quaternion:camera.quaternion.clone(),span},start:performance.now(),duration:850};camera.position.copy(from.position);camera.quaternion.copy(from.quaternion);camera.top=from.span/2;camera.bottom=-from.span/2;camera.left=-from.span*aspect/2;camera.right=from.span*aspect/2;camera.updateProjectionMatrix()}
-  $('#overview').setAttribute('aria-pressed',String(!focused));
+  positionMobileView();$('#overview').setAttribute('aria-pressed',String(!focused));
  }
  function stepCamera(now){if(!cameraTween)return;const t=Math.min(1,(now-cameraTween.start)/cameraTween.duration),e=t*t*(3-2*t),{from,to}=cameraTween;camera.position.lerpVectors(from.position,to.position,e);camera.quaternion.slerpQuaternions(from.quaternion,to.quaternion,e);const span=THREE.MathUtils.lerp(from.span,to.span,e),aspect=innerWidth/innerHeight;camera.top=span/2;camera.bottom=-span/2;camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.updateProjectionMatrix();camera.updateMatrixWorld(true);fx.invalidateReflection();if(t>=1)cameraTween=null}
  function visibility(){
@@ -131,25 +140,37 @@ try {
  canvas.addEventListener('pointerup',e=>endDrag(e));canvas.addEventListener('pointercancel',e=>endDrag(e,true));
  canvas.addEventListener('lostpointercapture',e=>{if(drag)endDrag(e,true)});
  canvas.addEventListener('keydown',e=>{if(e.key==='Escape'&&focused){returnMap();return}if(!editing)return;const moves={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};if(e.key==='Escape'){if(drag)endDrag(e,true);else edit(false);return}if(moves[e.key]){e.preventDefault();const [dx,dz]=moves[e.key],p=layout[selected],c=p[0]+dx,r=p[1]+dz;if(Math.abs(c)<=8&&Math.abs(r)<=8){commit(moveTile(layout,selected,c,r));frame()}}});
- function schedule(){ui?.sync();if(!raf&&!document.hidden)raf=requestAnimationFrame(render)}
+ function schedule(){ui?.sync();if(startupReady&&!raf&&!document.hidden)raf=requestAnimationFrame(render)}
  const projected=new THREE.Vector3();
  function render(now){raf=0;if(document.hidden)return;const dt=previous?Math.max(0,(now-previous)/1000):0;previous=now;accumulator+=dt;if(frames>1&&accumulator<1/30){schedule();return}const elapsedStep=accumulator,step=Math.min(.1,accumulator);accumulator=0;
   atmosphere.update(step);stepCamera(now);secondStar.update(step);if(!focused&&!drag)railway.update(step);if(focused&&!reduced){if(selected==='kaifeng')crowd.update(step,playing);else cityData[selected].update(step)}
   if(walkPlaying){walkElapsed+=elapsedStep;xian.walk.update(Math.min(8,walkElapsed));if(walkElapsed>=8)finishWalk()}
   if(playing){elapsed+=elapsedStep;cityData[selected].show.update(elapsed);if(elapsed>=metadata[selected].duration)finish()}
-  renderer.info.reset();fx.composer.render();frames++;
+  renderer.info.reset();fx.composer.render();frames++;if(frames===1)startup.firstFrame=performance.now();
   for(const [id,group] of Object.entries(cityGroups)){projected.set(0,-.3,7.1).applyMatrix4(group.matrixWorld).project(camera);const label=labels[id];label.style.left=(projected.x*.5+.5)*innerWidth+'px';label.style.top=(-projected.y*.5+.5)*innerHeight+'px';label.hidden=focused||projected.z>1||Math.abs(projected.x)>1.05||Math.abs(projected.y)>1.05}
   $('#loading')?.remove();
   if(!adapted&&step>0){samples++;if(step>.065)slow++;if(samples>=65){if(slow>50){quality=.9;fx.simplify();resize()}adapted=true}}
   schedule();
  }
+ const panelObserver=new ResizeObserver(entries=>{const height=entries[0].borderBoxSize?.[0]?.blockSize||$('.performance-control').getBoundingClientRect().height;if(height>0){document.documentElement.style.setProperty('--memory-panel-height',height+'px');positionMobileView();schedule();}});panelObserver.observe($('.performance-control'));
  addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0;stopAudio()}else{previous=0;accumulator=0;schedule()}});
  function route(){const id=location.hash.slice(1);if(metadata[id])enterCity(id,false);else returnMap(false)}addEventListener('hashchange',route);addEventListener('popstate',route);
  ui=createWorldToolbar({metadata,atmosphere,getState:()=>({selected,focused,editing,playing,walkPlaying,detailShot}),onEnter(id){if(editing)select(id);else enterCity(id);},onLanguage(){ui.sync(true);},onTime(value){if(playing)finish();atmosphere.setTime(value);schedule();}});
  applyLayout();buildGrid();select(selected);resize();visibility();if(metadata[location.hash.slice(1)])enterCity(location.hash.slice(1),false);schedule();
+ // Compile the visible materials in parallel before the first draw. Use the
+ // same HDR target as the composer, so this warms the actual shader variants.
+ async function prepareFirstFrame(){
+  $('#loading p').textContent='正在点亮我们的旅行地图…';
+  const warm=new THREE.Group();scene.traverseVisible(o=>{if(o.isMesh||o.isPoints||o.isLine||o.isSprite)warm.add(o.isMesh&&!o.isInstancedMesh?new THREE.Mesh(o.geometry,o.material).copy(o,false):o.clone(false));});
+  const previousTarget=renderer.getRenderTarget();
+  try{renderer.setRenderTarget(fx.composer.readBuffer);const ready=renderer.compileAsync(warm,camera,scene);renderer.setRenderTarget(previousTarget);await ready;}
+  catch(error){renderer.setRenderTarget(previousTarget);console.warn('Shader warmup deferred to first draw',error);}
+  finally{warm.clear();if(!startupDisposed){startup.readyAt=performance.now();startupReady=true;schedule();}}
+ }
+ prepareFirstFrame();
  // Read-only diagnostics make layout, route and resource checks reproducible.
- window.__neverlandStats=()=>{const screen=(x,y,z)=>{const p=new THREE.Vector3(x,y,z).project(camera);return {x:(p.x*.5+.5)*innerWidth,y:(-p.y*.5+.5)*innerHeight}};return {world:atmosphere.stats(),star:secondStar.stats(),toolbar:ui.stats(),zoom:view.orientation.zoom,city:selected,editing,focused,layout:structuredClone(layout),contexts:1,activeScenes:1,visibleCities:Object.keys(cityGroups).filter(id=>cityGroups[id].visible),detailShot,walkPlaying,walkElapsed,cameraMoving:!!cameraTween,aoEnabled:fx.ao.enabled,warriors:xian.stats.warriors,pitDepth:xian.stats.pitDepth,pagodaLevels:xian.stats.pagodaLevels,walking:focused?(selected==='kaifeng'?crowd.stats.walking:cityData[selected].stats.walking):0,crowdPosition:crowd.people.filter(p=>p.moving).slice(0,2).map(p=>[p.x,p.z]),frames,playing,pixels:canvas.width*canvas.height,geometryCount:renderer.info.memory.geometries,textureCount:renderer.info.memory.textures,programs:renderer.info.programs.length,railway:railway.stats(),longmenReady,luoyangTriangles:luoyang.stats.triangles,luoyangMemory:luoyang.diagnostics(),luoyangBlooms:luoyang.stats.blooms,datong:datong.diagnostics(),datongTriangles:datong.stats.triangles,tokyo:tokyo.diagnostics(),tokyoTriangles:tokyo.stats.triangles,hongkong:hongkong.diagnostics(),hongkongTriangles:hongkong.stats.triangles,triangles:kaifeng.triangles+xian.stats.triangles+luoyang.stats.triangles+datong.stats.triangles+tokyo.stats.triangles+hongkong.stats.triangles,tileScreens:Object.fromEntries(Object.entries(layout).map(([id,p])=>[id,screen(p[0]*CELL,0,p[1]*CELL)])),slots:Array.from({length:5},(_,c)=>Array.from({length:5},(_,r)=>({c:c-1,r:r-2,...screen((c-1)*CELL,0,(r-2)*CELL)}))).flat()}};
+ window.__neverlandStats=()=>{const screen=(x,y,z)=>{const p=new THREE.Vector3(x,y,z).project(camera);return {x:(p.x*.5+.5)*innerWidth,y:(-p.y*.5+.5)*innerHeight}};return {startup:{...startup},world:atmosphere.stats(),star:secondStar.stats(),toolbar:ui.stats(),zoom:view.orientation.zoom,city:selected,editing,focused,layout:structuredClone(layout),contexts:1,activeScenes:1,visibleCities:Object.keys(cityGroups).filter(id=>cityGroups[id].visible),detailShot,walkPlaying,walkElapsed,cameraMoving:!!cameraTween,aoEnabled:fx.ao.enabled,warriors:xian.stats.warriors,pitDepth:xian.stats.pitDepth,pagodaLevels:xian.stats.pagodaLevels,walking:focused?(selected==='kaifeng'?crowd.stats.walking:cityData[selected].stats.walking):0,crowdPosition:crowd.people.filter(p=>p.moving).slice(0,2).map(p=>[p.x,p.z]),frames,playing,pixels:canvas.width*canvas.height,geometryCount:renderer.info.memory.geometries,textureCount:renderer.info.memory.textures,programs:renderer.info.programs.length,railway:railway.stats(),longmenReady,luoyangTriangles:luoyang.stats.triangles,luoyangMemory:luoyang.diagnostics(),luoyangBlooms:luoyang.stats.blooms,datong:datong.diagnostics(),datongTriangles:datong.stats.triangles,tokyo:tokyo.diagnostics(),tokyoTriangles:tokyo.stats.triangles,hongkong:hongkong.diagnostics(),hongkongTriangles:hongkong.stats.triangles,triangles:kaifeng.triangles+xian.stats.triangles+luoyang.stats.triangles+datong.stats.triangles+tokyo.stats.triangles+hongkong.stats.triangles,tileScreens:Object.fromEntries(Object.entries(layout).map(([id,p])=>[id,screen(p[0]*CELL,0,p[1]*CELL)])),slots:Array.from({length:5},(_,c)=>Array.from({length:5},(_,r)=>({c:c-1,r:r-2,...screen((c-1)*CELL,0,(r-2)*CELL)}))).flat()}};
  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();$('#error').hidden=false});
- addEventListener('pagehide',()=>{if(raf)cancelAnimationFrame(raf);stopAudio();ui.dispose();secondStar.dispose();atmosphere.dispose();view.dispose();fx.dispose();luoyang.dispose();hongkong.dispose();railway.dispose();disposeScene(scene);renderer.dispose()},{once:true});
+ addEventListener('pagehide',()=>{startupDisposed=true;if(raf)cancelAnimationFrame(raf);panelObserver.disconnect();stopAudio();ui.dispose();secondStar.dispose();atmosphere.dispose();view.dispose();fx.dispose();luoyang.dispose();hongkong.dispose();railway.dispose();disposeScene(scene);renderer.dispose()},{once:true});
 }catch(error){console.error(error);$('#loading')?.remove();$('#error').hidden=false}

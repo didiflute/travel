@@ -1,3 +1,4 @@
+import {loadSculptureData} from './sculpture-data.mjs';
 import * as T from './vendor/three.module.js';
 import {bake} from './scene-resources.mjs';
 import {createPerson} from './people.mjs';
@@ -44,7 +45,7 @@ export function buildLongmen(){
  const glows=lampGlows(lamps);root.add(glows);
  const stats=bake(root),sculpture=new T.Group();sculpture.name='Vairocana volumetric sculpture';sculpture.position.set(0,2.65,-2.6);sculpture.userData.dynamic=true;root.add(sculpture);
  const loader=new T.TextureLoader();
- const ready=Promise.all([fetch(new URL('./assets/longmen/sculpture.json',import.meta.url).href).then(r=>r.json()),fetch(new URL('./assets/longmen/attendants.json',import.meta.url).href).then(r=>r.json()),loader.loadAsync(new URL('./assets/longmen/sculpture.webp',import.meta.url).href),loader.loadAsync(new URL('./assets/longmen/attendants.webp',import.meta.url).href)]).then(([mainData,attendantData,mainTex,attendantTex])=>{
+ const ready=Promise.all([loadSculptureData(new URL('./assets/longmen/sculpture.bin',import.meta.url).href),loadSculptureData(new URL('./assets/longmen/attendants.bin',import.meta.url).href),loader.loadAsync(new URL('./assets/longmen/sculpture.webp',import.meta.url).href),loader.loadAsync(new URL('./assets/longmen/attendants.webp',import.meta.url).href)]).then(([mainData,attendantData,mainTex,attendantTex])=>{
   for(const texture of [mainTex,attendantTex]){texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=4;}
   const main=stoneSculpture(mainData,mainTex,carving);sculpture.add(main);stats.triangles+=main.userData.triangles;
   const monk=stoneSculpture(attendantData[0],attendantTex,shadowStone),bodhisattva=stoneSculpture(attendantData[1],attendantTex,shadowStone);

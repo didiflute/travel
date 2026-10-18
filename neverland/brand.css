@@ -1,0 +1,78 @@
+/* Approved Dreamland wordmark: live type + static, five-character SVG. */
+@font-face{
+ font-family:"Dreamland Garamond";
+ src:url('./assets/brand/eb-garamond-medium-latin.woff') format('woff');
+ font-weight:500;font-style:normal;font-display:swap;
+}
+header .brand{
+ display:grid;grid-template-columns:36px max-content 172px;
+ gap:13px;align-items:center;max-width:100%;
+ color:#f2e5ce;text-decoration:none;
+}
+.brand .mark{
+ width:36px;padding:0;letter-spacing:-3px;
+ font:italic 39px/1 Georgia,serif;color:inherit;
+}
+.brand .mark span{
+ color:inherit;right:-1px;top:-3px;font:11px/1 Georgia,serif;letter-spacing:0;
+}
+.brand .brand-text{padding:0;border:0;min-width:0;}
+.brand #brandName,.brand-zh .brand #brandName{
+ display:block;font-family:"Songti SC","STSong","Noto Serif SC","PMingLiU",SimSun,serif;
+ font-size:21px;font-weight:400;line-height:1.35;letter-spacing:2px;white-space:nowrap;
+}
+.brand #brandSub,.brand-zh .brand #brandSub{
+ display:block;margin-top:6px;font:500 11px/1.3 "Dreamland Garamond",Garamond,Georgia,serif;
+ letter-spacing:2.2px;color:#a4b7c7;opacity:1;white-space:nowrap;
+}
+.brand .brand-flight{
+ display:block;width:172px;height:auto;overflow:visible;
+ color:inherit;pointer-events:none;user-select:none;
+}
+.english .brand #brandName{
+ font:500 27px/1.2 "Dreamland Garamond",Garamond,Georgia,serif;
+ letter-spacing:.2px;
+}
+.english .brand #brandSub{
+ font:500 8px/1.3 "Dreamland Garamond",Garamond,Georgia,serif;
+ letter-spacing:1.1px;margin-top:6px;
+}
+body[data-time=day] .brand{color:#354858}
+body[data-time=day] .brand #brandSub{color:#516578}
+body[data-time=dusk] .brand{color:#503e38}
+body[data-time=dusk] .brand #brandSub{color:#675851}
+.brand:focus-visible{outline:1px solid currentColor;outline-offset:6px;border-radius:3px}
+@media(max-width:950px){
+ header .brand{grid-template-columns:32px max-content 140px;gap:11px}
+ .brand .mark{font-size:36px;width:32px}
+ .brand #brandName,.brand-zh .brand #brandName{font-size:19px;letter-spacing:1.7px}
+ .brand .brand-flight{width:140px}
+}
+@media(max-width:750px){
+ header{top:22px;left:5%;right:5%;align-items:flex-start}
+ header .brand{grid-template-columns:27px minmax(0,max-content) minmax(78px,118px);gap:9px;width:min(100%,350px)}
+ .brand .mark{font-size:31px;width:27px;letter-spacing:-2px}
+ .brand .mark span{font-size:9px;right:-2px;top:-3px}
+ .brand #brandName,.brand-zh .brand #brandName{font-size:16px;letter-spacing:1.5px;line-height:1.4}
+ .brand #brandSub,.brand-zh .brand #brandSub{display:block;font-size:9px;letter-spacing:1.35px;margin-top:5px}
+ .brand .brand-flight{width:100%;min-width:0}
+ .english .brand #brandName{font-size:21px;letter-spacing:0}
+ .english .brand #brandSub{font-size:6.6px;letter-spacing:.7px}
+ header .world-tools{position:absolute;right:0;top:57px}
+ .intro,.city-detail .intro{top:119px}
+}
+@media(max-width:360px){
+ header .brand{grid-template-columns:24px minmax(0,max-content) minmax(72px,94px);gap:7px}
+ .brand .mark{width:24px;font-size:28px}
+ .brand #brandName,.brand-zh .brand #brandName{font-size:14px;letter-spacing:1.1px}
+ .brand #brandSub,.brand-zh .brand #brandSub{font-size:8px;letter-spacing:1.1px}
+ .english .brand #brandName{font-size:18px}
+ .english .brand #brandSub{font-size:5.7px;letter-spacing:.6px}
+}
+@media(max-height:650px) and (min-width:751px){
+ header .brand{grid-template-columns:30px max-content 125px;gap:10px}
+ .brand .mark{width:30px;font-size:33px}
+ .brand #brandName,.brand-zh .brand #brandName{font-size:18px}
+ .brand #brandSub,.brand-zh .brand #brandSub{display:block;font-size:9px;margin-top:4px;letter-spacing:1.6px}
+ .brand .brand-flight{width:125px}
+}

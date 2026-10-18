@@ -222,6 +222,12 @@ export function buildWorld({miniature=false}={}){
  for(let k=0;k<46;k++){const x=(rand()-.5)*7.8,z=1.1+rand()*5.5;if(Math.abs(x)>.6+z*.3)continue;const m=new THREE.Mesh(new THREE.PlaneGeometry(.06+rand()*.27,.012+rand()*.016),shimmerMat);m.rotation.x=-Math.PI/2;m.position.set(x,.008,z);shimmer.add(m)}
  // Merge static meshes, preserving normals and material identities.
  let triangles=0;
- for(const [material,geometries] of batches){let total=0;const gs=geometries.map(g=>g.index?g.toNonIndexed():g);for(const g of gs)total+=g.attributes.position.count;const pos=new Float32Array(total*3),norm=new Float32Array(total*3);let offset=0;for(const g of gs){pos.set(g.attributes.position.array,offset);norm.set(g.attributes.normal.array,offset);offset+=g.attributes.position.array.length;}const merged=new THREE.BufferGeometry();merged.setAttribute('position',new THREE.BufferAttribute(pos,3));merged.setAttribute('normal',new THREE.BufferAttribute(norm,3));merged.computeBoundingSphere();const mesh=new THREE.Mesh(merged,material);mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);triangles+=total/3;for(const g of gs)g.dispose();}
+ for(const [material,geometries] of batches){
+  let vertices=0,count=0;for(const g of geometries){vertices+=g.attributes.position.count;count+=g.index?g.index.count:g.attributes.position.count;}
+  const pos=new Float32Array(vertices*3),norm=new Float32Array(vertices*3),indices=new Uint32Array(count);let v=0,k=0;
+  for(const g of geometries){const p=g.attributes.position;pos.set(p.array,v*3);norm.set(g.attributes.normal.array,v*3);const n=g.index?g.index.count:p.count;for(let i=0;i<n;i++)indices[k++]=v+(g.index?g.index.getX(i):i);v+=p.count;g.dispose();}
+  const merged=new THREE.BufferGeometry();merged.setAttribute('position',new THREE.BufferAttribute(pos,3));merged.setAttribute('normal',new THREE.BufferAttribute(norm,3));merged.setIndex(new THREE.BufferAttribute(indices,1));merged.userData.sampleExpandedIndex=true;merged.computeBoundingSphere();const mesh=new THREE.Mesh(merged,material);mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);triangles+=count/3;
+ }
+ batches.clear();
  return {root,boat,water,waterMaterial,shimmerMat,materials:M,lanternPositions,triangles,stageY:arch(0)+.07,spectatorPositions,bridgeWidth:width,marketLayout};
 }

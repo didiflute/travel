@@ -127,3 +127,36 @@ footer p#hint{display:none}
 .map-label span{font-size:7.5px;margin-top:3px;opacity:.85}
 .map-label:hover,.map-label:focus-visible,.map-label[aria-pressed=true]{background:#2c3a4ee6}
 @media(max-width:750px){.map-label{min-width:0!important;padding:4px 8px!important}.map-label b{font-size:11px!important}}
+
+/* A legible journal invitation, with one clear destination and a book motif. */
+.performance-control{width:310px}
+#journalLink{display:grid;grid-template-columns:36px minmax(0,1fr) 18px;align-items:center;gap:11px;margin-top:15px;padding:15px 13px;min-height:78px;border:1px solid #ead8b9;border-radius:10px;background:#f4ecdd;color:#35434a;text-decoration:none;text-align:left;letter-spacing:0;box-shadow:0 4px 16px #10223016;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+#journalLink:hover{background:#fff8eb;color:#263b42;transform:translateY(-2px);box-shadow:0 6px 20px #10223028}
+.journal-book{display:flex;align-items:center;justify-content:center;width:36px;height:42px;color:#8c6b41}.journal-book svg{width:32px;height:32px}
+.journal-copy{min-width:0}.journal-title{display:block;font-family:'Songti SC',SimSun,Georgia,serif;font-size:17px;line-height:1.5;letter-spacing:.5px;font-weight:500}.journal-subtitle{display:block;margin-top:4px;color:#647074;font-size:11px;line-height:1.5;letter-spacing:.5px}.journal-arrow{font-size:21px;color:#907345}
+.english .journal-title{font-size:16px;letter-spacing:0}.english .journal-subtitle{font-size:10px;letter-spacing:0}
+@media(max-width:750px){.performance-control{width:auto}#journalLink{margin-top:12px;min-height:72px;padding:12px;gap:10px}.journal-title{font-size:16px}.journal-subtitle{font-size:10px}.detail-views{bottom:calc(130px + var(--memory-panel-height,260px) + 10px)}}
+@media(prefers-reduced-motion:reduce){#journalLink{transition:none}#journalLink:hover{transform:none}}
+
+/* Dreamland: a quiet literary wordmark, with room for both languages. */
+.brand{gap:18px;align-items:center;color:#f5e7cf}
+.brand .mark{flex:none;width:43px;font:italic 46px/1 Georgia,serif;letter-spacing:-6px;color:inherit;padding-right:5px}
+.brand .mark span{font:12px/1 Georgia,serif;letter-spacing:0;right:-1px;top:-3px;color:#caa779}
+.brand-text{display:block;padding-left:18px;border-left:1px solid #b4936555}
+.brand #brandName{display:block;font:400 30px/1.2 Baskerville,"Baskerville Old Face","Palatino Linotype",Georgia,serif;letter-spacing:.25px}
+.brand-zh .brand #brandName{font-family:"Songti SC","Noto Serif SC","PMingLiU",SimSun,serif;font-size:25px;line-height:1.3;letter-spacing:2.4px}
+.brand #brandSub{display:block;margin-top:8px;font:italic 15px/1.2 Baskerville,"Baskerville Old Face","Palatino Linotype",Georgia,serif;letter-spacing:1.7px;color:inherit;opacity:.73}
+.english .brand #brandSub{font:9px/1.5 Arial,sans-serif;letter-spacing:2.1px;margin-top:9px}
+.brand:focus-visible{outline:1px solid currentColor;outline-offset:9px;border-radius:2px}
+.intro,.city-detail .intro{top:132px}
+.intro .eyebrow{font-size:8px;letter-spacing:2.8px;line-height:1.6}
+.intro h1,.city-detail .intro h1{font-family:"Songti SC","Noto Serif SC","PMingLiU",SimSun,serif;font-size:38px;font-weight:400;line-height:1.45;letter-spacing:3px;margin:13px 0 10px}
+.intro .verse{font-size:10px;line-height:1.9;letter-spacing:.8px}
+.english .intro h1{font-family:Baskerville,"Baskerville Old Face","Palatino Linotype",Georgia,serif;font-size:35px;letter-spacing:.2px;line-height:1.15}
+@media(max-width:750px){
+ .brand{gap:11px}.brand .mark{font-size:34px;width:31px;letter-spacing:-4px}.brand .mark span{font-size:9px;right:-1px;top:-2px}
+ .brand-text{padding-left:12px}.brand #brandName{font-size:22px}.brand-zh .brand #brandName{font-size:17px;letter-spacing:1.5px}
+ .brand #brandSub{font-size:11px;letter-spacing:1.1px;margin-top:6px}.english .brand #brandSub{font-size:6.5px;letter-spacing:1.1px;margin-top:6px}
+ .intro,.city-detail .intro{top:113px}.intro h1,.city-detail .intro h1{font-size:27px;letter-spacing:2px;margin:10px 0 7px}.intro .verse{font-size:9px;letter-spacing:.4px}.english .intro h1{font-size:27px}
+}
+@media(max-height:650px) and (min-width:751px){.intro,.city-detail .intro{top:110px}.intro h1,.city-detail .intro h1{font-size:30px}}

@@ -8,7 +8,7 @@ export function createSeasonDetails(cityGroups){
  let flowerCount=0;
  for(const group of Object.values(cityGroups)){
   group.updateMatrixWorld(true);const inverse=group.matrixWorld.clone().invert(),flowers=[],lights=[];
-  group.traverse(o=>{if(!o.isMesh||!o.geometry?.attributes.position)return;const materials=[o.material].flat(),g=o.geometry,pos=g.attributes.position;
+  group.traverse(o=>{if(!o.isMesh||!o.geometry?.attributes.position)return;const materials=[o.material].flat(),g=o.geometry,pos=g.attributes.position,sampleIndex=g.userData.sampleExpandedIndex?g.index:null,sampleCount=sampleIndex?sampleIndex.count:pos.count;
    for(const material of materials){
     if(material.userData.snowSurface&&!patched.has(material)){
      patched.add(material);const previous=material.onBeforeCompile,cache=material.customProgramCacheKey();
@@ -17,8 +17,8 @@ export function createSeasonDetails(cityGroups){
       float frost=seasonSnow*smoothstep(.25,.72,climateNormal.y)*(.83+.17*frostNoise);
       diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.91,.94,.96),frost);`);};material.customProgramCacheKey=()=>cache+'-season-snow';material.needsUpdate=true;
     }
-    if(material.userData.seasonal&&flowers.length<210){const matrix=inverse.clone().multiply(o.matrixWorld),stride=Math.max(1,Math.floor(pos.count/100));for(let i=3;i<pos.count&&flowers.length<210;i+=stride){const p=new T.Vector3().fromBufferAttribute(pos,i).applyMatrix4(matrix);if(p.y>.7&&p.y<10&&Math.abs(p.x)<8.5&&Math.abs(p.z)<8.5)flowers.push(p);}}
-    if(material.emissiveIntensity>.2&&!material.userData.seasonal&&lights.length<120){const matrix=inverse.clone().multiply(o.matrixWorld),stride=Math.max(3,Math.floor(pos.count/50));for(let i=0;i<pos.count&&lights.length<120;i+=stride){const p=new T.Vector3().fromBufferAttribute(pos,i).applyMatrix4(matrix);if(p.y>.3&&p.y<10)lights.push(p);}}
+    if(material.userData.seasonal&&flowers.length<210){const matrix=inverse.clone().multiply(o.matrixWorld),stride=Math.max(1,Math.floor(sampleCount/100));for(let i=3;i<sampleCount&&flowers.length<210;i+=stride){const p=new T.Vector3().fromBufferAttribute(pos,sampleIndex?sampleIndex.getX(i):i).applyMatrix4(matrix);if(p.y>.7&&p.y<10&&Math.abs(p.x)<8.5&&Math.abs(p.z)<8.5)flowers.push(p);}}
+    if(material.emissiveIntensity>.2&&!material.userData.seasonal&&lights.length<120){const matrix=inverse.clone().multiply(o.matrixWorld),stride=Math.max(3,Math.floor(sampleCount/50));for(let i=0;i<sampleCount&&lights.length<120;i+=stride){const p=new T.Vector3().fromBufferAttribute(pos,sampleIndex?sampleIndex.getX(i):i).applyMatrix4(matrix);if(p.y>.3&&p.y<10)lights.push(p);}}
    }
   });
   const blossom=new T.InstancedMesh(flowerGeometry,flowerMaterial,flowers.length),fall=new T.InstancedMesh(leafGeometry,leafMaterial,flowers.length),dummy=new T.Object3D();
